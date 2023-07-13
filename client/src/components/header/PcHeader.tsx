@@ -24,13 +24,14 @@ const Logo = styled.h1`
 `;
 
 const Menu = styled.ul`
-  font-family: ${({ theme }) => theme.fonts.logo};
   width: 100%;
+  padding-bottom: 10px;
   margin-top: 30px;
   display: flex;
   justify-content: center;
   color: rgb(255, 153, 204);
   text-transform: uppercase;
+  font-family: ${({ theme }) => theme.fonts.logo};
 `;
 
 const MenuItem = styled.li`

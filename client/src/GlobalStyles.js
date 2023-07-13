@@ -30,6 +30,13 @@ const GlobalStyles = createGlobalStyle`
       cursor: pointer;
     }
 
+   
+
+    @media (max-width: 767px) {
+            .hide-button {
+              display: none;
+            }
+    }
 `;
 
 export default GlobalStyles;
