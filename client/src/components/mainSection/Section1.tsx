@@ -16,7 +16,10 @@ const Wrapper = styled.div`
   grid-template-columns: 1fr 1fr;
   grid-gap: 2rem;
   margin: 0 auto;
-  padding-bottom: 120px;
+  /* padding-bottom: 120px; */
+  padding-bottom: calc(
+    (100vw * 0.0078125 + (1280px - 100vw) * 0.0023777) * 12
+  ) !important;
 
   @media (max-width: 640px) {
     grid-template-columns: 1fr;
@@ -38,21 +41,25 @@ const Contents = styled.div`
 
   p {
     width: 90%;
-    line-height: 1.5;
+    line-height: 1.3;
     color: rgb(195, 88, 123);
     font-weight: 300;
     text-align: left;
     font-size: calc(18px - (1280px - 100vw) * 0.0015638) !important;
     padding: 3rem 0;
     padding-left: 1rem;
-    margin-bottom: 1rem;
+    font-family: ${({ theme }) => theme.fonts.sentence};
 
     @media (max-width: 640px) {
-      padding: 0 1rem;
+      padding: 1rem;
+
+      .mr {
+        margin-left: 0.3rem;
+      }
     }
   }
 
-  span {
+  .title {
     font-size: calc(100px - (1280px - 100vw) * 0.0543477) !important;
     color: #fff;
   }
@@ -79,9 +86,10 @@ const Image = styled.div<{ maxwith: string }>`
   img {
     border-radius: 10px;
     object-fit: cover;
-
-    transform: rotateY(10deg) rotateX(-10deg);
-    transition: transform 0.3s ease-in-out;
+    //원본
+    /* transform: rotateY(10deg) rotateX(-10deg); */
+    transform: rotateY(-4deg) rotateX(1deg);
+    transition: transform 0.3s linear;
 
     @media (max-width: 640px) {
       transform: rotateY(0deg) rotateX(0deg);
@@ -95,15 +103,24 @@ const Section1 = () => {
       <Wrapper>
         <Contents>
           <h1>
-            newjeans&nbsp;
-            <span>plant</span>
+            <span className='title'>plant</span>&nbsp; newjeans
           </h1>
 
-          <p>
+          {/* <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, Ut enim ad
             minim veniam, quis nostrud exercitation ullamco laboris nisi ut
             aliquip ex ea commodo consequat. Duis aute irure dolor in
             reprehenderit in voluptate velit
+          </p> */}
+          <p>
+            <span className='mr'>영</span>원한 젊음의 대명사인 청바지처럼
+            <br />
+            질리지 않는 음악을 하겠다는 그들의 각오처럼
+            <br />
+            오리진의 유전자를 계속 지켜가며 건강한 그룹으로 성장해가는
+            뉴진스라는 이름처럼..
+            {/* 새로운 시대, 새로운 세대를 대변하는 음악을 앞으로도 계속 들려줬으면
+            좋겠습니다. */}
           </p>
 
           <Image maxwith={'527px'}>

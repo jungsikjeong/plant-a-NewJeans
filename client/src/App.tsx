@@ -8,6 +8,7 @@ import { ThemeProvider } from 'styled-components';
 const theme = {
   fonts: {
     logo: 'Chela One, cursive',
+    sentence: 'Nanum Pen Script, cursive',
   },
 };
 

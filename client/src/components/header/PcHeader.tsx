@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -40,6 +40,8 @@ const MenuItem = styled.li`
 `;
 
 const PcHeader = () => {
+  useEffect(() => {}, []);
+
   return (
     <Component>
       <Logo>
