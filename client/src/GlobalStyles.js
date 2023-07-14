@@ -3,6 +3,9 @@ import reset from 'styled-reset';
 
 const GlobalStyles = createGlobalStyle`
     ${reset}
+    .control-dots{
+      display: none;
+    }
     a{
         text-decoration: none;
         color: inherit;
@@ -30,7 +33,11 @@ const GlobalStyles = createGlobalStyle`
       cursor: pointer;
     }
 
-   
+
+    img{  
+      width: 100%;
+      height: 100%;
+    }
 
     @media (max-width: 767px) {
             .hide-button {

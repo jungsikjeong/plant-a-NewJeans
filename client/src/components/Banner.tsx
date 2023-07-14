@@ -21,7 +21,7 @@ const Component = styled.section`
     height: auto;
     max-width: 100%;
     max-height: 100%;
-    /* filter: sepia(50%) saturate(300%); */
+    vertical-align: middle;
     object-fit: cover;
   }
 `;
@@ -95,7 +95,12 @@ const Banner = () => {
               type='button'
               onClick={onClickHandler}
               title={label}
-              style={{ ...arrowStyles, left: '10%' }}
+              style={
+                {
+                  ...arrowStyles,
+                  left: '10%',
+                } as React.CSSProperties
+              }
               className='hide-button'
             ></button>
           )
@@ -106,14 +111,20 @@ const Banner = () => {
               type='button'
               onClick={onClickHandler}
               title={label}
-              style={{ ...arrowStyles, right: '10%', transform: 'scaleX(-1)' }}
+              style={
+                {
+                  ...arrowStyles,
+                  right: '10%',
+                  transform: 'scaleX(-1)',
+                } as React.CSSProperties
+              }
               className='hide-button'
             ></button>
           )
         }
         showArrows={true}
         showStatus={false}
-        // autoPlay={true}
+        autoPlay={true}
         infiniteLoop={true}
         animationHandler={'fade'}
         showThumbs={false}
