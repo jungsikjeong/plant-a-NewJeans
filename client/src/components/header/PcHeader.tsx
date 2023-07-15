@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -10,6 +10,12 @@ const Component = styled.section`
   flex-direction: column;
   padding: 10px;
   margin: auto;
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  z-index: 200;
+  background-color: rgb(255, 255, 255);
 `;
 
 const Logo = styled.h1`
@@ -21,6 +27,7 @@ const Logo = styled.h1`
   background-clip: text;
   -webkit-background-clip: text;
   flex: 1 1 auto;
+  transition: all 0.3s ease;
 `;
 
 const Menu = styled.ul`
@@ -40,11 +47,31 @@ const MenuItem = styled.li`
 `;
 
 const PcHeader = () => {
-  useEffect(() => {}, []);
+  const comRef = useRef<any>();
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.screenY || document.documentElement.scrollTop;
+
+      const scrollThreshold = 10; //
+
+      if (scrollTop > scrollThreshold && comRef.current) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   return (
-    <Component>
-      <Logo>
+    <Component ref={comRef} className={isScrolled ? 'header-shadow' : ''}>
+      <Logo className={isScrolled ? 'header-font-size' : ''}>
         <Link to='/'>Plant</Link>
       </Logo>
       <Menu>

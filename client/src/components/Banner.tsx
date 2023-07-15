@@ -9,6 +9,10 @@ const Component = styled.section`
   width: 100%;
   height: 100%;
   overflow: hidden;
+  margin-top: 8rem;
+  @media (max-width: 1024px) {
+    margin-top: 0;
+  }
 
   .image-container {
     width: 100%;

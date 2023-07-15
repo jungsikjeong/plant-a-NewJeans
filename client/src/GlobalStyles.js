@@ -39,13 +39,11 @@ const GlobalStyles = createGlobalStyle`
       height: 100%;
     }
 
-    .header-fixed{
-      position: fixed;
-      left: 0;
-      top: 0;
-      right: 0;
-      box-shadow: 0 3px 3px rgba(0,0,0,.16);
-      background-color: rgb(255, 255, 255);
+    .header-shadow{
+      box-shadow: 0 3px 3px rgba(0, 0, 0, 0.16);
+    }
+    .header-font-size{
+      font-size: 50px;
     }
 
     @media (max-width: 767px) {

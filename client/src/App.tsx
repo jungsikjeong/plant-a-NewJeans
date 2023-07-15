@@ -9,6 +9,7 @@ const theme = {
   fonts: {
     logo: 'Chela One, cursive',
     sentence: 'Nanum Pen Script, cursive',
+    normally: 'Noto Sans KR, sans-serif',
   },
 };
 
