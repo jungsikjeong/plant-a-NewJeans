@@ -72,8 +72,11 @@ const Image = styled.div<{ maxwith: string }>`
   max-width: ${({ maxwith }) => maxwith};
   perspective: 1000px;
 
-  @media (max-width: 640px) {
+  @media (max-width: 1000px) {
     padding: 0 1rem;
+  }
+
+  @media (max-width: 640px) {
     max-width: 100%;
     height: 450px;
     perspective: 0px;
@@ -106,12 +109,6 @@ const Section1 = () => {
             <span className='title'>plant</span>&nbsp; newjeans
           </h1>
 
-          {/* <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, Ut enim ad
-            minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit
-          </p> */}
           <p>
             <span className='mr'>영</span>원한 젊음의 대명사인 청바지처럼
             <br />
