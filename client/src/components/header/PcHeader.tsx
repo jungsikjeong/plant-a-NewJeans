@@ -75,11 +75,21 @@ const PcHeader = () => {
         <Link to='/'>Plant</Link>
       </Logo>
       <Menu>
-        <MenuItem>about glory</MenuItem>
-        <MenuItem>menu</MenuItem>
-        <MenuItem>gallery</MenuItem>
-        <MenuItem>news</MenuItem>
-        <MenuItem>store</MenuItem>
+        <MenuItem>
+          <Link to={'/'}>about glory</Link>
+        </MenuItem>
+        <MenuItem>
+          <Link to={'/'}>album</Link>
+        </MenuItem>
+        <MenuItem>
+          <Link to={'/'}>gallery</Link>
+        </MenuItem>
+        <MenuItem>
+          <Link to={'/'}>news</Link>
+        </MenuItem>
+        <MenuItem>
+          <Link to={'/'}>store</Link>
+        </MenuItem>
       </Menu>
     </Component>
   );

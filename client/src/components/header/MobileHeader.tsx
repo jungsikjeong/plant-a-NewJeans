@@ -164,7 +164,7 @@ const MobileHeader = () => {
               <Link to={'/'}>about glory</Link>
             </SideMenuItem>
             <SideMenuItem>
-              <Link to={'/'}>menu</Link>
+              <Link to={'/'}>album</Link>
             </SideMenuItem>
             <SideMenuItem>
               <Link to={'/'}>gallery</Link>
