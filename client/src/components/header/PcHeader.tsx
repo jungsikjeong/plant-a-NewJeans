@@ -31,6 +31,7 @@ const Logo = styled.h1`
 `;
 
 const Menu = styled.ul`
+  max-width: 1260px;
   width: 100%;
   padding-bottom: 10px;
   margin-top: 30px;
@@ -42,13 +43,34 @@ const Menu = styled.ul`
 `;
 
 const MenuItem = styled.li`
+  position: relative;
   font-weight: 400;
   padding: 0 2.5rem;
 `;
 
+const AboutSubMenu = styled.div`
+  min-width: 160px;
+  position: absolute;
+  border-top: 1px solid #777;
+  background: #fff;
+  color: #777777;
+  box-shadow: 0 0 2px #ddd;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: all 0.2s linear;
+
+  li {
+    padding: 1rem;
+  }
+`;
+
 const PcHeader = () => {
-  const comRef = useRef<any>();
   const [isScrolled, setIsScrolled] = useState(false);
+
+  const comRef = useRef<any>();
+  const aboutRef = useRef<any>();
+  const aboutSubMenuRef = useRef<any>();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -69,6 +91,34 @@ const PcHeader = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleMouseOver = () => {
+      if (aboutSubMenuRef.current) {
+        aboutSubMenuRef.current.style.visibility = 'visible';
+        aboutSubMenuRef.current.style.opacity = '1';
+        aboutSubMenuRef.current.style.transform = 'translateY(0px)';
+      }
+    };
+
+    const handleMouseOut = () => {
+      if (aboutSubMenuRef.current) {
+        aboutSubMenuRef.current.style.visibility = 'hidden';
+        aboutSubMenuRef.current.style.opacity = '0';
+        aboutSubMenuRef.current.style.transform = 'translateY(-4px)';
+      }
+    };
+
+    const aboutRefCurrent = aboutRef.current;
+
+    aboutRefCurrent.addEventListener('mouseover', handleMouseOver);
+    aboutRefCurrent.addEventListener('mouseout', handleMouseOut);
+
+    return () => {
+      aboutRefCurrent.removeEventListener('mouseover', handleMouseOver);
+      aboutRefCurrent.removeEventListener('mouseout', handleMouseOut);
+    };
+  }, []);
+
   return (
     <Component ref={comRef} className={isScrolled ? 'header-shadow' : ''}>
       <Logo className={isScrolled ? 'header-font-size' : ''}>
@@ -76,19 +126,33 @@ const PcHeader = () => {
       </Logo>
       <Menu>
         <MenuItem>
-          <Link to={'/'}>about glory</Link>
+          <Link to={'/pages/about'} ref={aboutRef}>
+            about glory
+            {/* About 서브메뉴 */}
+            <AboutSubMenu ref={aboutSubMenuRef}>
+              <ul>
+                <li>
+                  <Link to={'/pages/about'}>ABOUT</Link>
+                </li>
+                <li>
+                  <Link to={'/pages/history'}>HISTORY</Link>
+                </li>
+              </ul>
+            </AboutSubMenu>
+          </Link>
+        </MenuItem>
+
+        <MenuItem>
+          <Link to={'/pages/album'}>album </Link>
         </MenuItem>
         <MenuItem>
-          <Link to={'/'}>album</Link>
+          <Link to={'/pages/gallery'}>gallery</Link>
         </MenuItem>
         <MenuItem>
-          <Link to={'/'}>gallery</Link>
+          <Link to={'/pages/news'}>news</Link>
         </MenuItem>
         <MenuItem>
-          <Link to={'/'}>news</Link>
-        </MenuItem>
-        <MenuItem>
-          <Link to={'/'}>store</Link>
+          <Link to={'/pages/store'}>store</Link>
         </MenuItem>
       </Menu>
     </Component>

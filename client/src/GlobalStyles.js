@@ -52,6 +52,7 @@ const GlobalStyles = createGlobalStyle`
       font-size: 50px;
     }
 
+
     @media (max-width: 767px) {
             .hide-button {
               display: none;
