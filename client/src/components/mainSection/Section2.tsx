@@ -1,22 +1,28 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
+import members from '../../utils/members';
 
 const Component = styled.section`
   max-width: 1280px;
   margin: 0 auto;
+  height: 100vh;
   padding: 100px 10px;
   @media (max-width: 640px) {
     padding: 50px 10px;
+    height: auto;
   }
 `;
 
 const Wrapper = styled.div`
+  margin-top: 6rem;
   padding: 2rem 0;
   display: flex;
   justify-content: space-around;
+
   @media (max-width: 640px) {
     display: block;
-    padding: 1rem 0;
+    margin: 0;
+    padding: 0;
   }
 `;
 
@@ -65,6 +71,9 @@ const Box = styled.div<{ height?: string }>`
   }
 
   .name {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 22px;
     font-weight: 500;
     margin-bottom: 0.4rem;
@@ -79,10 +88,54 @@ const Box = styled.div<{ height?: string }>`
       display: block;
       margin-top: 0.2rem;
     }
+    @media (max-width: 640px) {
+      visibility: hidden;
+      display: none;
+    }
+  }
+`;
+
+const MobileContents = styled.p`
+  color: rgb(132, 132, 132);
+  text-align: center;
+  font-size: 15px;
+  span {
+    display: block;
+    margin-top: 0.2rem;
+  }
+`;
+
+const InfoBtn = styled.button`
+  display: none;
+  visibility: hidden;
+
+  @media (max-width: 640px) {
+    display: block;
+    width: 20px;
+    visibility: visible;
   }
 `;
 
 const Section2 = () => {
+  const [showContent, setShowContent] = useState(false);
+  const [activeIndex, setActiveIndex] = useState<any>(null);
+
+  const onToggleContent = (index: number) => {
+    setActiveIndex((prevIndex: number) => (prevIndex === index ? null : index));
+    setShowContent(!showContent);
+  };
+
+  useEffect(() => {
+    const onResize = () => {
+      setActiveIndex(null);
+    };
+
+    window.addEventListener('resize', onResize);
+
+    return () => {
+      window.removeEventListener('resize', onResize);
+    };
+  }, []);
   return (
     <Component>
       <Box>
@@ -97,51 +150,27 @@ const Section2 = () => {
       </Box>
 
       <Wrapper>
-        <Box height={'150px'}>
-          <img src='/images/민지.jpg' alt='민지' />
-          <p className='name'>민지</p>
-          <p className='contents'>
-            ESTJ
-            <br />
-            <span>엄격한 관리자</span>
-          </p>
-        </Box>
-        <Box height={'150px'}>
-          <img src='/images/하니.jpg' alt='하니' />
-          <p className='name'>하니</p>
-          <p className='contents'>
-            INFP
-            <br />
-            <span>중재자 잔다르크</span>
-          </p>
-        </Box>
-        <Box height={'150px'}>
-          <img src='/images/다니.jpg' alt='다니' />
-          <p className='name'>다니엘</p>
-          <p className='contents'>
-            ENFP
-            <br />
-            <span>재기발랄한 활동가</span>
-          </p>
-        </Box>
-        <Box height={'150px'}>
-          <img src='/images/해린.jpg' alt='해린' />
-          <p className='name'>해린</p>
-          <p className='contents'>
-            ISTP
-            <br />
-            <span>만능 재주꾼 장인</span>
-          </p>
-        </Box>
-        <Box height={'150px'}>
-          <img src='/images/혜인.jpg' alt='혜인' />
-          <p className='name'>혜인</p>
-          <p className='contents'>
-            INFP
-            <br />
-            <span>중재자 잔다르크</span>
-          </p>
-        </Box>
+        {members.map((member, index) => (
+          <Box key={index} height={'150px'}>
+            <img src={member.image} alt={member.name} />
+            <p className='name'>
+              {member.name}
+              <InfoBtn onClick={() => onToggleContent(index)}>🔽</InfoBtn>
+            </p>
+            {activeIndex === index && (
+              <MobileContents>
+                {member.mbti}
+                <br />
+                <span>{member.description}</span>
+              </MobileContents>
+            )}
+            <p className='contents'>
+              {member.mbti}
+              <br />
+              <span>{member.description}</span>
+            </p>
+          </Box>
+        ))}
       </Wrapper>
     </Component>
   );

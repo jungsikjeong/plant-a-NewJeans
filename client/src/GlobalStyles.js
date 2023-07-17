@@ -16,7 +16,9 @@ const GlobalStyles = createGlobalStyle`
     }
 
     body{
+      position: relative;
       font-family: 'Noto Sans KR', 'sans-serif';
+      padding-bottom: 100px;
     }
 
     input, textarea { 
