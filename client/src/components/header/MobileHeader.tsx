@@ -161,19 +161,19 @@ const MobileHeader = () => {
             </SideMenuCloseBtn>
 
             <SideMenuItem>
-              <Link to={'/'}>about glory</Link>
+              <Link to={'/pages/about'}>about glory</Link>
             </SideMenuItem>
             <SideMenuItem>
-              <Link to={'/'}>album</Link>
+              <Link to={'/pages/album'}>album</Link>
             </SideMenuItem>
             <SideMenuItem>
-              <Link to={'/'}>gallery</Link>
+              <Link to={'/pages/gallery'}>gallery</Link>
             </SideMenuItem>
             <SideMenuItem>
-              <Link to={'/'}>news</Link>
+              <Link to={'/pages/news'}>news</Link>
             </SideMenuItem>
             <SideMenuItem>
-              <Link to={'/'}>store</Link>
+              <Link to={'/pages/store'}>store</Link>
             </SideMenuItem>
           </SideMenuList>
         </SideMenu>
