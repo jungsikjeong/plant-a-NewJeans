@@ -3,10 +3,16 @@ import { Link } from 'react-router-dom';
 import { styled } from 'styled-components';
 
 const Component = styled.footer`
-  position: absolute;
+  /* position: absolute;
   left: 0;
   bottom: 0;
   width: 100%;
+  background: #fff; */
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background: #fff;
 `;
 
 const Wrapper = styled.div`
@@ -28,7 +34,6 @@ const Logo = styled.h1`
   -webkit-background-clip: text;
   flex: 1 1 auto;
   transition: all 0.3s ease;
-  margin-bottom: 1rem;
 `;
 
 const Author = styled.div`

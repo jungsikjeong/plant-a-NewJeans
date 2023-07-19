@@ -125,21 +125,19 @@ const PcHeader = () => {
         <Link to='/'>Plant</Link>
       </Logo>
       <Menu>
-        <MenuItem>
-          <Link to={'/pages/about'} ref={aboutRef}>
-            about glory
-            {/* About 서브메뉴 */}
-            <AboutSubMenu ref={aboutSubMenuRef}>
-              <ul>
-                <li>
-                  <Link to={'/pages/about'}>ABOUT</Link>
-                </li>
-                <li>
-                  <Link to={'/pages/history'}>HISTORY</Link>
-                </li>
-              </ul>
-            </AboutSubMenu>
-          </Link>
+        <MenuItem ref={aboutRef}>
+          <Link to={'/pages/about'}>about glory</Link>
+          {/* About 서브메뉴 */}
+          <AboutSubMenu ref={aboutSubMenuRef}>
+            <ul>
+              <li>
+                <Link to={'/pages/about'}>ABOUT</Link>
+              </li>
+              <li>
+                <Link to={'/pages/history'}>HISTORY</Link>
+              </li>
+            </ul>
+          </AboutSubMenu>
         </MenuItem>
 
         <MenuItem>

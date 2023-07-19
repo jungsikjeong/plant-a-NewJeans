@@ -5,6 +5,10 @@ import Home from './components/Home';
 import Header from './components/header/Header';
 import Footer from './components/Footer';
 import { ThemeProvider } from 'styled-components';
+import { StyleSheetManager } from 'styled-components';
+import isPropValid from '@emotion/is-prop-valid';
+import About from './components/About';
+import History from './components/History/History';
 
 const theme = {
   fonts: {
@@ -16,14 +20,18 @@ const theme = {
 
 const App = () => {
   return (
-    <ThemeProvider theme={theme}>
-      <GlobalStyles />
-      <Header />
-      <Routes>
-        <Route path='/' element={<Home />} />
-      </Routes>
-      <Footer />
-    </ThemeProvider>
+    <StyleSheetManager shouldForwardProp={(prop) => isPropValid(prop)}>
+      <ThemeProvider theme={theme}>
+        <GlobalStyles />
+        <Header />
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/pages/About' element={<About />} />
+          <Route path='/pages/history' element={<History />} />
+        </Routes>
+        <Footer />
+      </ThemeProvider>
+    </StyleSheetManager>
   );
 };
 

@@ -1,4 +1,4 @@
-const members = [
+const membersMBTI = [
   {
     name: '민지',
     mbti: 'ESTJ',
@@ -31,4 +31,4 @@ const members = [
   },
 ];
 
-export default members;
+export default membersMBTI;

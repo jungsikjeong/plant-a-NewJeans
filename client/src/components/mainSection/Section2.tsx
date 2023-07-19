@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
-import members from '../../utils/members';
+import membersMBTI from '../../utils/membersMBTI';
 
 const Component = styled.section`
   max-width: 1280px;
@@ -150,7 +150,7 @@ const Section2 = () => {
       </Box>
 
       <Wrapper>
-        {members.map((member, index) => (
+        {membersMBTI.map((member, index) => (
           <Box key={index} height={'150px'}>
             <img src={member.image} alt={member.name} />
             <p className='name'>
