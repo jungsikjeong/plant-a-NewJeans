@@ -178,7 +178,9 @@ const MobileHeader = () => {
           </SideMenuList>
         </SideMenu>
 
-        <Logo>Plant</Logo>
+        <Logo>
+          <Link to={'/'}>Plant</Link>
+        </Logo>
 
         <Menu>
           <SideOpenBtn ismenu={isMenu ? 'true' : ''} onClick={onMenuClick}>
