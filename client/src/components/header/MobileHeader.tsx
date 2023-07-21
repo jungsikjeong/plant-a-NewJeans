@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { AiOutlineClose } from 'react-icons/ai';
+import { RiArrowDropDownLine, RiArrowDropUpLine } from 'react-icons/ri';
 
 const ModalBG = styled.div`
   position: fixed;
@@ -127,13 +128,15 @@ const SideMenuList = styled.ul`
   margin-top: 30px;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
   height: 25%;
   font-weight: bold;
   letter-spacing: -0.5px;
 `;
 
-const SideMenuItem = styled.li``;
+const SideMenuItem = styled.li`
+  position: relative;
+  padding: 1rem 0;
+`;
 
 const SideMenuCloseBtn = styled.button`
   position: absolute;
@@ -143,12 +146,55 @@ const SideMenuCloseBtn = styled.button`
   height: 33px;
 `;
 
+const AboutSubButton = styled.button`
+  position: absolute;
+  top: 5px;
+  right: -10px;
+  text-align: center;
+  color: #999;
+`;
+
+const AboutSubMenuList = styled.ul<{ visibility?: string }>`
+  display: ${({ visibility }) => visibility};
+  margin-top: 1rem;
+  background: #f3f3f3;
+  padding: 1rem;
+  color: #777;
+  overflow: hidden;
+
+  transition: all 0.3s ease;
+`;
+
+const AboutSubMenuItem = styled.li`
+  font-weight: 500;
+`;
+
 const MobileHeader = () => {
   const [isMenu, setIsMenu] = useState<boolean>(false);
+  const [isAboutSubMenu, setIsAboutSubMenu] = useState<boolean>(false);
+  const [visibility, setVisibility] = useState(false);
 
   const onMenuClick = () => {
     setIsMenu((prev) => !prev);
   };
+
+  const onAboutSubMenuClick = () => {
+    if (isAboutSubMenu) {
+      setIsAboutSubMenu(false);
+    } else {
+      setIsAboutSubMenu((prev) => !prev);
+      setVisibility(true);
+    }
+  };
+
+  useEffect(() => {
+    if (!isAboutSubMenu) {
+      setTimeout(() => {
+        setVisibility(false);
+      }, 400);
+    }
+  }, [isAboutSubMenu]);
+
   return (
     <>
       {isMenu && <ModalBG />}
@@ -162,7 +208,31 @@ const MobileHeader = () => {
 
             <SideMenuItem>
               <Link to={'/pages/about'}>about glory</Link>
+
+              <AboutSubButton onClick={onAboutSubMenuClick}>
+                {isAboutSubMenu ? (
+                  // 위
+                  <RiArrowDropUpLine size={35} />
+                ) : (
+                  // 아래
+                  <RiArrowDropDownLine size={35} />
+                )}
+              </AboutSubButton>
+
+              {/* About 서브 메뉴 */}
+              <AboutSubMenuList
+                className={
+                  isAboutSubMenu ? 'fadeInDropdown' : 'fadeOutDropdown'
+                }
+                visibility={visibility ? 'block' : 'none'}
+              >
+                <AboutSubMenuItem>about</AboutSubMenuItem>
+                <AboutSubMenuItem style={{ marginTop: '.7rem' }}>
+                  history
+                </AboutSubMenuItem>
+              </AboutSubMenuList>
             </SideMenuItem>
+
             <SideMenuItem>
               <Link to={'/pages/album'}>album</Link>
             </SideMenuItem>
