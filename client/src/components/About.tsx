@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
-import CustomAnimation from '../style/CustomAnimation';
 
 const Component = styled.section`
   padding: 8.5rem 0;
@@ -15,37 +14,13 @@ const Banner = styled.div`
   position: relative;
   width: 100%;
   height: 350px;
-  background-image: url('/images/1.png');
-  background-image: url('https://i.pinimg.com/564x/20/5e/44/205e44e31f73017ada8405351254fc77.jpg');
-  /* background-image: url('https://i.pinimg.com/564x/c6/72/8f/c6728f1f452d5fe99cfa4b8924eda36b.jpg'); */
   background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center bottom;
-`;
-
-const Visible = styled.div`
-  max-width: 1200px;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  margin: 0 auto;
-
-  .Visible-wrap {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.2);
-
-    p {
-      font-size: 2rem;
-      color: #fff;
-    }
+  background-size: contain;
+  background-position: center;
+  display: none;
+  @media (max-width: 1024px) {
+    display: block;
+    background-image: url('/images/history/history1.jpg');
   }
 `;
 
@@ -148,35 +123,10 @@ const ImageArea = styled.div`
 
 const About = () => {
   const [isHover, setIsHover] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-
-    if (isHover) {
-      setIsVisible(true);
-    } else {
-      timer = setTimeout(() => {
-        setIsVisible(false);
-      }, 1000);
-    }
-
-    return () => clearTimeout(timer);
-  }, [isHover]);
 
   return (
     <Component>
-      <Banner>
-        {isVisible && (
-          <CustomAnimation isHover={isHover}>
-            <Visible>
-              <div className='Visible-wrap'>
-                <p>온 세상이 뉴진스인데 아직도 모르는 당신을 위하여..</p>
-              </div>
-            </Visible>
-          </CustomAnimation>
-        )}
-      </Banner>
+      <Banner />
 
       <Wrapper>
         <Contents>
