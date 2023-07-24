@@ -72,6 +72,7 @@ const Wrapper = styled.div`
     font-size: 20px;
     font-weight: 600;
     color: rgb(195, 88, 123);
+    padding: 1rem 0;
   }
 
   @media (max-width: 640px) {
@@ -85,9 +86,9 @@ const Contents = styled.div`
 `;
 
 const Text = styled.div`
-  padding: 2rem 0;
+  padding: 1rem 0;
   p {
-    padding: 1rem 0;
+    padding-top: 1rem;
     line-height: 1.5;
     font-weight: 300;
     color: rgb(195, 88, 123);
@@ -121,6 +122,7 @@ const ImageArea = styled.div`
   width: 51.6129%;
   /* width: 20%; */
   left: 25%;
+  left: 15%;
   &::after {
     content: '';
     width: 100%;
@@ -229,7 +231,10 @@ const About = () => {
           </Text>
 
           <Text>
-            <h3>같은 듯 다른 매력, 민지·하니·다니엘·해린·혜인</h3>
+            <h3 style={{ letterSpacing: '-0.14rem' }}>
+              {/* <h3> */}
+              같은 듯 다른 매력, 민지·하니·다니엘·해린·혜인
+            </h3>
 
             <p>
               뉴진스의 멤버는 민지, 하니, 다니엘, 해린, 혜인 총 다섯 명이다.
@@ -274,7 +279,7 @@ const About = () => {
               />
             </div>
           </ImageArea>
-          <ImageArea style={{ left: '5rem' }}>
+          <ImageArea style={{ left: '10rem' }}>
             <div className='img-box'>
               <img
                 src='https://i.pinimg.com/564x/6c/29/20/6c2920c16fdccbf5e198a5ea8462c9fb.jpg'
@@ -290,7 +295,7 @@ const About = () => {
               />
             </div>
           </ImageArea>
-          <ImageArea style={{ left: '5rem' }}>
+          <ImageArea style={{ left: '10rem' }}>
             <div className='img-box'>
               <img
                 src='https://i.pinimg.com/564x/fe/1a/f2/fe1af26fde75eb18512f3718b3758176.jpg'
