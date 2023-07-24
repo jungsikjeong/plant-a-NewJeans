@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { AiOutlineClose } from 'react-icons/ai';
@@ -20,10 +20,16 @@ const Component = styled.section`
   align-items: center;
   padding: 10px;
   margin: auto;
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  z-index: 200;
+  background-color: rgb(255, 255, 255);
 `;
 
 const Logo = styled.h1`
-  font-family: 'Chela One', cursive;
+  font-family: ${({ theme }) => theme.fonts.logo};
   font-weight: bolder;
   font-size: 60px;
   background: linear-gradient(to right bottom, #ffa69e, #507dff);
@@ -31,6 +37,7 @@ const Logo = styled.h1`
   background-clip: text;
   -webkit-background-clip: text;
   flex: 1 1 auto;
+  transition: all 0.3s ease;
 `;
 
 const Menu = styled.div`
@@ -173,6 +180,9 @@ const MobileHeader = () => {
   const [isMenu, setIsMenu] = useState<boolean>(false);
   const [isAboutSubMenu, setIsAboutSubMenu] = useState<boolean>(false);
   const [visibility, setVisibility] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  const comRef = useRef<any>();
 
   const onMenuClick = () => {
     setIsMenu((prev) => !prev);
@@ -186,6 +196,24 @@ const MobileHeader = () => {
       setVisibility(true);
     }
   };
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.screenY || document.documentElement.scrollTop;
+
+      const scrollThreshold = 10; //
+
+      if (scrollTop > scrollThreshold && comRef.current) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   useEffect(() => {
     if (!isAboutSubMenu) {
@@ -199,7 +227,7 @@ const MobileHeader = () => {
     <>
       {isMenu && <ModalBG />}
 
-      <Component>
+      <Component ref={comRef} className={isScrolled ? 'header-shadow' : ''}>
         <SideMenu ismenu={isMenu ? 'true' : ''}>
           <SideMenuList>
             <SideMenuCloseBtn>
@@ -248,8 +276,8 @@ const MobileHeader = () => {
           </SideMenuList>
         </SideMenu>
 
-        <Logo>
-          <Link to={'/'}>Plant</Link>
+        <Logo className={isScrolled ? 'header-font-size' : ''}>
+          <Link to='/'>Plant</Link>
         </Logo>
 
         <Menu>

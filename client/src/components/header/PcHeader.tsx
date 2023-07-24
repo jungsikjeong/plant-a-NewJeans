@@ -91,6 +91,7 @@ const PcHeader = () => {
     };
   }, []);
 
+  // About subMenu 활성화
   useEffect(() => {
     const handleMouseOver = () => {
       if (aboutSubMenuRef.current) {
