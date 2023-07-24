@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { styled } from 'styled-components';
+import { useLocation } from 'react-router-dom';
 
 const Component = styled.footer`
   position: absolute;
@@ -33,28 +34,49 @@ const Logo = styled.h1`
 
 const Author = styled.div`
   color: #666;
-  font-size: 13px;
+  padding: 0 1rem;
+  font-size: 11px;
+  text-align: right;
+  flex: 1;
 
   span {
     display: inline-block;
     position: relative;
     border-bottom: 1px solid #eee;
   }
+  @media (min-width: 1024px) {
+    font-size: 13px;
+  }
 `;
 
 const Footer = () => {
+  const location = useLocation();
+
   return (
     <Component>
       <Wrapper>
         <Logo>
           <Link to='/'>Plant</Link>
         </Logo>
-        <Author>
-          © 2023 Created by
-          <Link to='https://github.com/jungsikjeong'>
-            <span> Joongshik Jung</span>
-          </Link>
-        </Author>
+
+        {location.pathname === '/pages/about' ? (
+          <Author>
+            © copy from :&nbsp;
+            <Link
+              to='https://news.mt.co.kr/mtview.php?no=2023020308307266406'
+              target='_blank'
+            >
+              <span>머니투데이 이덕행 기자</span>
+            </Link>
+          </Author>
+        ) : (
+          <Author>
+            © 2023 Created by
+            <Link to='https://github.com/jungsikjeong' target='_blank'>
+              <span> Joongshik Jung</span>
+            </Link>
+          </Author>
+        )}
       </Wrapper>
     </Component>
   );
