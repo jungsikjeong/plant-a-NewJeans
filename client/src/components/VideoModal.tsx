@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 import YouTube from 'react-youtube';
+import { useTransition, animated } from '@react-spring/web';
 
 const Component = styled.div`
   position: absolute;
@@ -91,25 +92,52 @@ const VideoModal = ({ videoId, onModalClose }: ModalTypes) => {
     height: '390',
     width: '100%',
     playerVars: {
-      autoplay: 1,
+      autoplay: 0,
     },
   };
+
+  const transition = useTransition(true, {
+    from: {
+      scale: 0,
+      opacity: 0,
+    },
+    enter: {
+      scale: 1,
+      opacity: 1,
+    },
+    leave: {
+      scale: 0,
+      opacity: 0,
+    },
+  });
 
   return (
     <Component>
       <Wrapper>
-        {videoData === 'error' ? (
-          <Error>
-            <Close onClick={onModalClose}>닫기</Close>
-            에러가 발생했습니다.
-            <br />
-            다시 시도해주세요!
-          </Error>
-        ) : (
-          <VideoWrap>
-            <Close onClick={onModalClose}>닫기</Close>
-            <YouTube videoId={videoID} opts={opts} />
-          </VideoWrap>
+        {transition((style, item) =>
+          item ? (
+            <animated.div
+              style={{
+                ...style,
+                width: '100%',
+                height: '100%',
+              }}
+            >
+              {videoData === 'error' ? (
+                <Error>
+                  <Close onClick={onModalClose}>닫기</Close>
+                  에러가 발생했습니다.
+                  <br />
+                  다시 시도해주세요!
+                </Error>
+              ) : (
+                <VideoWrap>
+                  <Close onClick={onModalClose}>닫기</Close>
+                  <YouTube videoId={videoID} opts={opts} />
+                </VideoWrap>
+              )}
+            </animated.div>
+          ) : null
         )}
       </Wrapper>
     </Component>

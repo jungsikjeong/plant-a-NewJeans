@@ -10,6 +10,7 @@ import isPropValid from '@emotion/is-prop-valid';
 import About from './components/About';
 import History from './components/History/History';
 import Album from './components/Album';
+import Gallery from './components/Gallery';
 
 const theme = {
   fonts: {
@@ -25,11 +26,13 @@ const App = () => {
       <ThemeProvider theme={theme}>
         <GlobalStyles />
         <Header />
+
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/pages/About' element={<About />} />
           <Route path='/pages/history' element={<History />} />
           <Route path='/pages/album' element={<Album />} />
+          <Route path='/pages/Gallery' element={<Gallery />} />
         </Routes>
         <Footer />
       </ThemeProvider>

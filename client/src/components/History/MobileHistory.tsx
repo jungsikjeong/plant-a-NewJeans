@@ -1,8 +1,18 @@
 import React from 'react';
-import { styled } from 'styled-components';
+import { keyframes, styled } from 'styled-components';
 import { Fade, Slide } from 'react-awesome-reveal';
 
+// 페이지 전환효과
+const ScreenFrames = keyframes`
+ from{
+  transform:translateY(-10px);
+ }
+ to{
+  transform:translateY(0);
+ }
+`;
 const Component = styled.section`
+  animation: ${ScreenFrames} 0.75s;
   padding-top: 8rem;
   height: 100%;
   background: #f2d9d9;

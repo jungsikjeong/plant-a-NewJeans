@@ -52,6 +52,7 @@ const GlobalStyles = createGlobalStyle`
     }
 
     .header-shadow{
+      position: fixed;
       box-shadow: 0 3px 3px rgba(0, 0, 0, 0.16);
     }
     .header-font-size{

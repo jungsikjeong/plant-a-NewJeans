@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Carousel } from 'react-responsive-carousel';
 import { styled } from 'styled-components';
 import bannerImageData from '../../utils/banner';
+import ImageModal from '../ImageModal';
 
 const Component = styled.div`
   width: 100%;
@@ -25,8 +26,22 @@ const Wrapper = styled.div`
 `;
 
 const Section3Gallery = () => {
+  const [modal, setModal] = useState(false);
+  const [imageURL, setImageURL] = useState('');
+
+  const onModalActivate = (url: string) => {
+    setModal(true);
+    setImageURL(url);
+  };
+
+  const onModalClose = () => {
+    setModal(false);
+  };
+
   return (
     <Component>
+      {modal && <ImageModal imageURL={imageURL} onModalClose={onModalClose} />}
+
       <Carousel
         showArrows={true}
         showStatus={false}
@@ -40,7 +55,7 @@ const Section3Gallery = () => {
         interval={3500}
       >
         {bannerImageData.map((item, index) => (
-          <Wrapper key={index}>
+          <Wrapper key={index} onClick={() => onModalActivate(item.url)}>
             <img src={item.url} alt='' />
           </Wrapper>
         ))}

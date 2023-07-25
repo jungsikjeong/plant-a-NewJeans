@@ -1,9 +1,18 @@
 import React, { useState } from 'react';
-import { styled } from 'styled-components';
+import { keyframes, styled } from 'styled-components';
 import VideoModal from './VideoModal';
 import albumData from '../utils/albumData';
-
+// 페이지 전환효과
+const ScreenFrames = keyframes`
+ from{
+  transform:translateY(-10px);
+ }
+ to{
+  transform:translateY(0);
+ }
+`;
 const Component = styled.section`
+  animation: ${ScreenFrames} 0.75s;
   position: relative;
   padding: 8.5rem 0;
   background: #f2d9d9;

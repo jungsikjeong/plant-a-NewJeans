@@ -20,12 +20,13 @@ const Component = styled.section`
   align-items: center;
   padding: 10px;
   margin: auto;
-  position: fixed;
+  position: static;
   left: 0;
   top: 0;
   right: 0;
   z-index: 200;
   background-color: rgb(255, 255, 255);
+  transition: all 0.3s ease;
 `;
 
 const Logo = styled.h1`
@@ -200,7 +201,7 @@ const MobileHeader = () => {
     const handleScroll = () => {
       const scrollTop = window.screenY || document.documentElement.scrollTop;
 
-      const scrollThreshold = 10; //
+      const scrollThreshold = 10;
 
       if (scrollTop > scrollThreshold && comRef.current) {
         setIsScrolled(true);

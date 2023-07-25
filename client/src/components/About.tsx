@@ -1,10 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { styled } from 'styled-components';
+import React, { useState } from 'react';
+import { styled, keyframes } from 'styled-components';
+
+// 페이지 전환효과
+const ScreenFrames = keyframes`
+ from{
+  transform:translateY(-10px);
+ }
+ to{
+  transform:translateY(0);
+ }
+`;
 
 const Component = styled.section`
   padding: 8.5rem 0;
-  /* height: 100%; */
   background: #f2d9d9;
+  animation: ${ScreenFrames} 0.75s;
+
   @media (max-width: 1024px) {
     padding-top: 0;
   }

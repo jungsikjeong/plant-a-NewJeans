@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { styled } from 'styled-components';
-import { Fade, Slide } from 'react-awesome-reveal';
+import { Fade } from 'react-awesome-reveal';
 
 const Component = styled.section`
   padding-top: 8rem;
   height: 100%;
   background: #f2d9d9;
+
   transition: all 0.3s ease;
   @media (max-width: 1024px) {
     padding-top: 0;
