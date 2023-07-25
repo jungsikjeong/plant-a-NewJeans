@@ -34,7 +34,6 @@ const Wrapper = styled.div`
     font-family: ${({ theme }) => theme.fonts.logo};
     font-size: calc(90px - (1280px - 100vw) * 0.0448272);
     color: #fff;
-    cursor: pointer;
   }
 
   h2 {
@@ -156,10 +155,7 @@ const About = () => {
           </Text>
 
           <Figure>
-            <img
-              src='https://thumb.mt.co.kr/06/2023/02/2023020308307266406_2.jpg/dims/optimize/'
-              alt='views'
-            />
+            <img src='/images/about/about1.jpg' alt='views' />
             <figcaption>
               뉴진스 다니엘, 하니, 혜인, 혜린, 민지(왼쪽 위부터 시계방향으로).
               사진제공=ADOR
@@ -223,42 +219,27 @@ const About = () => {
         <Contents>
           <ImageArea>
             <div className='img-box'>
-              <img
-                src='https://i.pinimg.com/564x/c0/f2/e2/c0f2e24234e6f4b94d675032a7016fa1.jpg'
-                alt=''
-              />
+              <img src='/images/about/about2.jpg' alt='' />
             </div>
           </ImageArea>
           <ImageArea style={{ left: '10rem' }}>
             <div className='img-box'>
-              <img
-                src='https://i.pinimg.com/564x/6c/29/20/6c2920c16fdccbf5e198a5ea8462c9fb.jpg'
-                alt=''
-              />
+              <img src='/images/about/about3.jpg' alt='' />
             </div>
           </ImageArea>
           <ImageArea>
             <div className='img-box'>
-              <img
-                src='https://i.pinimg.com/564x/8b/62/e2/8b62e2938dd41ab8e23927f5af8a6ad5.jpg'
-                alt=''
-              />
+              <img src='/images/about/about4.jpg' alt='' />
             </div>
           </ImageArea>
           <ImageArea style={{ left: '10rem' }}>
             <div className='img-box'>
-              <img
-                src='https://i.pinimg.com/564x/fe/1a/f2/fe1af26fde75eb18512f3718b3758176.jpg'
-                alt=''
-              />
+              <img src='/images/about/about5.jpg' alt='' />
             </div>
           </ImageArea>
           <ImageArea>
             <div className='img-box'>
-              <img
-                src='https://i.pinimg.com/564x/0d/ea/02/0dea02e4b6ad5c2d006ce8e250dfb2f4.jpg'
-                alt=''
-              />
+              <img src='/images/about/about6.jpg' alt='' />
             </div>
           </ImageArea>
         </Contents>

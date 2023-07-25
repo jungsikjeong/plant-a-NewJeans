@@ -20,6 +20,11 @@ const GlobalStyles = createGlobalStyle`
       font-family: 'Noto Sans KR', 'sans-serif';
       /* padding-bottom: 100px; */
     }
+    ul,li{
+      list-style: none;
+        padding: 0;
+        margin: 0;
+    }
 
     input, textarea { 
       -moz-user-select: auto;
@@ -35,7 +40,8 @@ const GlobalStyles = createGlobalStyle`
     button {
       border: none;
       background: none;
-      padding: 0;
+      padding: 0;  
+      outline: none;
       cursor: pointer;
     }
 
