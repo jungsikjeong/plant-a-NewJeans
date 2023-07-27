@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import CustomLink from '../common/CustomLink';
 
 const Component = styled.section`
   width: 100%;
@@ -123,35 +124,35 @@ const PcHeader = () => {
   return (
     <Component ref={comRef} className={isScrolled ? 'header-shadow' : ''}>
       <Logo className={isScrolled ? 'header-font-size' : ''}>
-        <Link to='/'>Plant</Link>
+        <CustomLink to='/'>Plant</CustomLink>
       </Logo>
       <Menu>
         <MenuItem ref={aboutRef}>
-          <Link to={'/pages/about'}>about glory</Link>
+          <CustomLink to='/pages/about'>about glory</CustomLink>
           {/* About 서브메뉴 */}
           <AboutSubMenu ref={aboutSubMenuRef}>
             <ul>
               <li>
-                <Link to={'/pages/about'}>ABOUT</Link>
+                <CustomLink to='/pages/about'>ABOUT</CustomLink>
               </li>
               <li>
-                <Link to={'/pages/history'}>HISTORY</Link>
+                <CustomLink to='/pages/history'>HISTORY</CustomLink>
               </li>
             </ul>
           </AboutSubMenu>
         </MenuItem>
 
         <MenuItem>
-          <Link to={'/pages/album'}>album </Link>
+          <CustomLink to='/pages/album'>album</CustomLink>
         </MenuItem>
         <MenuItem>
-          <Link to={'/pages/gallery'}>gallery</Link>
+          <CustomLink to='/pages/gallery'>gallery</CustomLink>
         </MenuItem>
         <MenuItem>
-          <Link to={'/pages/news'}>news</Link>
+          <CustomLink to='/pages/news'>news</CustomLink>
         </MenuItem>
         <MenuItem>
-          <Link to={'/pages/store'}>store</Link>
+          <CustomLink to='/pages/store'>store</CustomLink>
         </MenuItem>
       </Menu>
     </Component>

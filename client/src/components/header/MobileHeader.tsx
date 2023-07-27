@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { AiOutlineClose } from 'react-icons/ai';
 import { RiArrowDropDownLine, RiArrowDropUpLine } from 'react-icons/ri';
+import CustomLink from '../common/CustomLink';
 
 const ModalBG = styled.div`
   position: fixed;
@@ -236,7 +237,7 @@ const MobileHeader = () => {
             </SideMenuCloseBtn>
 
             <SideMenuItem>
-              <Link to={'/pages/about'}>about glory</Link>
+              <CustomLink to='/pages/about'>about glory</CustomLink>
 
               <AboutSubButton onClick={onAboutSubMenuClick}>
                 {isAboutSubMenu ? (
@@ -255,30 +256,46 @@ const MobileHeader = () => {
                 }
                 visibility={visibility ? 'block' : 'none'}
               >
-                <AboutSubMenuItem>about</AboutSubMenuItem>
+                <AboutSubMenuItem>
+                  <CustomLink to='/pages/about' onMenuClick={onMenuClick}>
+                    about
+                  </CustomLink>
+                </AboutSubMenuItem>
                 <AboutSubMenuItem style={{ marginTop: '.7rem' }}>
-                  history
+                  <CustomLink to='/pages/history' onMenuClick={onMenuClick}>
+                    history
+                  </CustomLink>
                 </AboutSubMenuItem>
               </AboutSubMenuList>
             </SideMenuItem>
 
             <SideMenuItem>
-              <Link to={'/pages/album'}>album</Link>
+              <CustomLink to='/pages/album' onMenuClick={onMenuClick}>
+                album
+              </CustomLink>
             </SideMenuItem>
             <SideMenuItem>
-              <Link to={'/pages/gallery'}>gallery</Link>
+              <CustomLink to='/pages/gallery' onMenuClick={onMenuClick}>
+                gallery
+              </CustomLink>
             </SideMenuItem>
             <SideMenuItem>
-              <Link to={'/pages/news'}>news</Link>
+              <CustomLink to='/pages/news' onMenuClick={onMenuClick}>
+                news
+              </CustomLink>
             </SideMenuItem>
             <SideMenuItem>
-              <Link to={'/pages/store'}>store</Link>
+              <CustomLink to='/pages/store' onMenuClick={onMenuClick}>
+                store
+              </CustomLink>
             </SideMenuItem>
           </SideMenuList>
         </SideMenu>
 
         <Logo className={isScrolled ? 'header-font-size' : ''}>
-          <Link to='/'>Plant</Link>
+          <CustomLink to='/' onMenuClick={onMenuClick}>
+            Plant
+          </CustomLink>
         </Logo>
 
         <Menu>
