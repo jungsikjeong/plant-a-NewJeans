@@ -17,6 +17,10 @@ const Component = styled.section`
   padding: 8.5rem 0;
   background: #f2d9d9;
 
+  @media (max-width: 1024px) {
+    padding-top: 0rem;
+  }
+
   h1 {
     margin-top: 3rem;
     font-family: ${({ theme }) => theme.fonts.logo};
@@ -37,10 +41,6 @@ const Component = styled.section`
     line-height: 1.3;
     font-weight: 300;
     font-size: calc(18px - (1280px - 100vw) * 0.002166);
-  }
-
-  @media (max-width: 1024px) {
-    padding-top: 5rem;
   }
 `;
 

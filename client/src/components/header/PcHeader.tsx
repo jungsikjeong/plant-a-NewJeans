@@ -152,7 +152,7 @@ const PcHeader = () => {
           <CustomLink to='/pages/news'>news</CustomLink>
         </MenuItem>
         <MenuItem>
-          <CustomLink to='/pages/store'>store</CustomLink>
+          <CustomLink to='/pages/signin'>sign in</CustomLink>
         </MenuItem>
       </Menu>
     </Component>

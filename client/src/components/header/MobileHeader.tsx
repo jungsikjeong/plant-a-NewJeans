@@ -285,8 +285,8 @@ const MobileHeader = () => {
               </CustomLink>
             </SideMenuItem>
             <SideMenuItem>
-              <CustomLink to='/pages/store' onMenuClick={onMenuClick}>
-                store
+              <CustomLink to='/pages/signup' onMenuClick={onMenuClick}>
+                sign up
               </CustomLink>
             </SideMenuItem>
           </SideMenuList>

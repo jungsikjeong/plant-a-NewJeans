@@ -12,6 +12,8 @@ import History from './components/History/History';
 import Album from './components/Album';
 import Gallery from './components/Gallery';
 import News from './components/News/News';
+import SignIn from './components/SignIn';
+import SignUp from './components/SignUp';
 
 const theme = {
   fonts: {
@@ -35,6 +37,8 @@ const App = () => {
           <Route path='/pages/album' element={<Album />} />
           <Route path='/pages/gallery' element={<Gallery />} />
           <Route path='/pages/news' element={<News />} />
+          <Route path='/pages/signin' element={<SignIn />} />
+          <Route path='/pages/signup' element={<SignUp />} />
         </Routes>
         <Footer />
       </ThemeProvider>
