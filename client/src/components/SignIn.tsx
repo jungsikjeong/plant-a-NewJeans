@@ -52,6 +52,9 @@ const Logo = styled.div`
     color: #bbb;
     font-size: 0.875rem;
   }
+  .underscore {
+    border-bottom: 1px solid #bbb;
+  }
 `;
 
 const Form = styled.form`
@@ -65,6 +68,7 @@ const Input = styled.input`
   font-size: 14px;
   border: 1px solid #bbb;
   transition: all 0.3s ease;
+  border-radius: 5px;
 
   &::placeholder {
     color: #bbb;
@@ -76,6 +80,7 @@ const Input = styled.input`
 `;
 
 const Button = styled.button`
+  border-radius: 5px;
   margin-top: 1rem;
   padding: 0.5rem;
   color: #bbb;
@@ -129,7 +134,10 @@ const SignIn = () => {
       <Wrapper>
         <Logo>
           <h2>조금 더 친해지기</h2>
-          <p>로그인을 통해 뉴진스에게 다가가보세요</p>
+          <p>
+            <span className='underscore'>로그인</span>을 통해 뉴진스에게
+            다가가보세요
+          </p>
         </Logo>
         <Form>
           <Input

@@ -52,6 +52,10 @@ const Logo = styled.div`
     color: #bbb;
     font-size: 0.875rem;
   }
+
+  .underscore {
+    border-bottom: 1px solid #bbb;
+  }
 `;
 
 const Form = styled.form`
@@ -63,6 +67,7 @@ const Form = styled.form`
 const Input = styled.input`
   padding: 0.6rem;
   font-size: 14px;
+  border-radius: 5px;
   border: 1px solid #bbb;
   transition: all 0.3s ease;
 
@@ -81,6 +86,7 @@ const Button = styled.button`
   color: #bbb;
   background-color: #fff9c9;
   letter-spacing: -1px;
+  border-radius: 5px;
 `;
 
 const Box = styled.div`
@@ -129,19 +135,27 @@ const SignUp = () => {
       <Wrapper>
         <Logo>
           <h2>조금 더 친해지기</h2>
-          <p>로그인을 통해 뉴진스에게 다가가보세요</p>
+          <p>
+            <span className='underscore'>회원가입</span>을 통해 뉴진스에게
+            다가가보세요
+          </p>
         </Logo>
         <Form>
+          <Input
+            type='type'
+            placeholder='이름 입력'
+            style={{ marginBottom: '.5rem' }}
+          />
           <Input
             type='email'
             placeholder='이메일 입력'
             style={{ marginBottom: '.5rem' }}
           />
           <Input type='password' placeholder='비밀번호 입력' />
-          <Button>로그인</Button>
+          <Button>회원가입</Button>
         </Form>
         <Box>
-          <Link to='/pages/signup'>회원가입</Link>
+          <Link to='/pages/signin'>로그인</Link>
           <Link to='/pages/password'>비밀번호 찾기</Link>
         </Box>
         <Box>
@@ -151,7 +165,7 @@ const SignUp = () => {
         </Box>
         <Box>
           <KakaoButton>
-            <RiKakaoTalkFill size={29} /> &nbsp;카카오계정으로 로그인
+            <RiKakaoTalkFill size={29} /> &nbsp;카카오계정으로 회원가입
           </KakaoButton>
         </Box>
       </Wrapper>

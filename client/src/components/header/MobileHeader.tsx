@@ -237,7 +237,9 @@ const MobileHeader = () => {
             </SideMenuCloseBtn>
 
             <SideMenuItem>
-              <CustomLink to='/pages/about'>about glory</CustomLink>
+              <CustomLink to='/pages/about' onMenuClick={onMenuClick}>
+                about plant
+              </CustomLink>
 
               <AboutSubButton onClick={onAboutSubMenuClick}>
                 {isAboutSubMenu ? (
@@ -285,8 +287,8 @@ const MobileHeader = () => {
               </CustomLink>
             </SideMenuItem>
             <SideMenuItem>
-              <CustomLink to='/pages/signup' onMenuClick={onMenuClick}>
-                sign up
+              <CustomLink to='/pages/signin' onMenuClick={onMenuClick}>
+                sign in
               </CustomLink>
             </SideMenuItem>
           </SideMenuList>
