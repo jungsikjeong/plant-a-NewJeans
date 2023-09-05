@@ -1,7 +1,18 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, {
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { keyframes, styled } from 'styled-components';
-import { RiKakaoTalkFill } from 'react-icons/ri';
+import axios from 'axios';
+import { fetchByAuth } from '../store/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { ThunkDispatch } from '@reduxjs/toolkit';
+import { RootState } from '../store';
+import SocialKakao from './SocialKakao';
 
 // 페이지 전환효과
 const ScreenFrames = keyframes`
@@ -79,13 +90,16 @@ const Input = styled.input`
   }
 `;
 
-const Button = styled.button`
+const Button = styled.button<{ buttonStyles?: string }>`
   border-radius: 5px;
   margin-top: 1rem;
   padding: 0.5rem;
-  color: #bbb;
-  background-color: #fff9c9;
+  color: ${({ buttonStyles }) => (buttonStyles ? '#000' : '#bbb')};
+  background-color: ${({ buttonStyles }) =>
+    buttonStyles ? 'yellow' : '#fff9c9'};
   letter-spacing: -1px;
+  font-weight: bold;
+  transition: all 0.3s ease;
 `;
 
 const Box = styled.div`
@@ -108,27 +122,85 @@ const Box = styled.div`
   }
 `;
 
-const KakaoButton = styled(Button)`
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: yellow;
-  color: #bbb;
-  font-weight: bold;
-  font-size: 0.875rem;
-  transition: all 0.3s ease;
-
-  &:hover {
-    color: #000;
-  }
-
-  @media (max-width: 500px) {
-    color: #000;
-  }
+const Message = styled.div`
+  text-align: center;
+  margin-top: 0.5rem;
+  color: tomato;
+  font-size: 0.785rem;
 `;
 
 const SignIn = () => {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
+  const [message, setMessage] = useState('');
+  const [buttonStyles, setButtonStyles] = useState(false);
+  const { user } = useSelector((state: RootState) => state.auth);
+
+  const { email, password } = formData;
+
+  const navigator = useNavigate();
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+  const inputRef = useRef<HTMLInputElement[]>([]);
+
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value.replace(/\s/g, ''),
+    });
+  };
+
+  const onSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    if (!email || email === '') {
+      inputRef.current[0].focus();
+      return setMessage('이메일을 입력해주세요');
+    }
+
+    if (password.length < 6) {
+      inputRef.current[1].focus();
+      return setMessage('비밀번호는 6글자이상 입력해주세요');
+    }
+    if (password.length > 6) {
+      inputRef.current[1].focus();
+      return setMessage('비밀번호는 6글자까지만 입력해주세요');
+    }
+
+    try {
+      const res = await axios.post('/api/auth/login', {
+        email,
+        password,
+      });
+
+      if (res.data?.token) {
+        localStorage.setItem('token', JSON.stringify(res.data.token));
+
+        dispatch(fetchByAuth());
+        navigator('/');
+      }
+    } catch (err: any) {
+      const message = err.response.data.errors.msg;
+      setMessage(message);
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    if (email && password && password.length >= 6) {
+      setButtonStyles(true);
+    }
+
+    if (email === '' || password === '' || password.length < 6) {
+      setButtonStyles(false);
+    }
+  }, [email, password]);
+
+  if (user) {
+    return <Navigate to='/' />;
+  }
+
   return (
     <Component>
       <Wrapper>
@@ -139,14 +211,25 @@ const SignIn = () => {
             다가가보세요
           </p>
         </Logo>
-        <Form>
+        <Form onSubmit={onSubmit}>
           <Input
             type='email'
             placeholder='이메일 입력'
             style={{ marginBottom: '.5rem' }}
+            name='email'
+            onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e)}
+            ref={(el: HTMLInputElement) => (inputRef.current[0] = el)}
           />
-          <Input type='password' placeholder='비밀번호 입력' />
-          <Button>로그인</Button>
+          <Input
+            type='password'
+            placeholder='비밀번호 입력'
+            name='password'
+            onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e)}
+            ref={(el: HTMLInputElement) => (inputRef.current[1] = el)}
+          />
+
+          {message && <Message>{message}</Message>}
+          <Button buttonStyles={buttonStyles ? 'true' : ''}>로그인</Button>
         </Form>
         <Box>
           <Link to='/pages/signup'>회원가입</Link>
@@ -158,9 +241,7 @@ const SignIn = () => {
           <hr style={{ width: '42%' }} />
         </Box>
         <Box>
-          <KakaoButton>
-            <RiKakaoTalkFill size={29} /> &nbsp;카카오계정으로 로그인
-          </KakaoButton>
+          <SocialKakao />
         </Box>
       </Wrapper>
     </Component>

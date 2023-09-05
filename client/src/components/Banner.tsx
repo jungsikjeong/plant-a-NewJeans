@@ -14,6 +14,12 @@ const Component = styled.section`
     margin-top: 0;
   }
 
+  @media (max-width: 767px) {
+    .hide-button {
+      display: none;
+    }
+  }
+
   .image-container {
     width: 100%;
     height: auto;
@@ -89,7 +95,6 @@ const Banner = () => {
     backgroundImage: 'url(/images/arrow.png)',
     cursor: 'pointer',
   };
-
   return (
     <Component>
       <Carousel

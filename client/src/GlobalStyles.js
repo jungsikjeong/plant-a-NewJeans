@@ -6,6 +6,7 @@ const GlobalStyles = createGlobalStyle`
     .control-dots{
       display: none;
     }
+  
     a{
         text-decoration: none;
         color: inherit;
@@ -14,16 +15,33 @@ const GlobalStyles = createGlobalStyle`
     *{
         box-sizing: border-box;
     }
+    strong{
+      font-weight: bold;
+    }
+    em{
+      font-style: oblique;
+    }
+    .ql-size-small{
+      font-size:.75em;
+    }
+    .ql-size-large{
+      font-size:1.5em;
+    }
+    .ql-size-huge{
+      font-size:2.5em;
+    }
+    
 
     body{
+      margin:0;
+      padding:0;
       position: relative;
       font-family: 'Noto Sans KR', 'sans-serif';
-      /* padding-bottom: 100px; */
     }
     ul,li{
       list-style: none;
-        padding: 0;
-        margin: 0;
+      padding: 0;
+      margin: 0;
     }
 
     input, textarea { 
@@ -97,11 +115,7 @@ const GlobalStyles = createGlobalStyle`
       }
     }
 
-    @media (max-width: 767px) {
-      .hide-button {
-        display: none;
-      }
-    }
+   
 `;
 
 export default GlobalStyles;

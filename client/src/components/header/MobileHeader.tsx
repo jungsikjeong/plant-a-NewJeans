@@ -1,9 +1,45 @@
 import { useEffect, useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { AiOutlineClose } from 'react-icons/ai';
 import { RiArrowDropDownLine, RiArrowDropUpLine } from 'react-icons/ri';
 import CustomLink from '../common/CustomLink';
+import { fetchByKakaoLogout } from '../../store/authSlice';
+import { logout } from '../../store';
+import { useDispatch } from 'react-redux';
+import { ThunkDispatch } from '@reduxjs/toolkit';
+
+const OpenAnimation = keyframes`
+  from {
+    max-height: 0;
+    opacity: 0;
+    visibility: hidden;
+    margin-top: 0rem;
+    padding: 0rem;
+  }
+  to {
+    margin-top: 1rem;
+    padding: 1rem;
+    max-height: 150px;
+    opacity: 1;
+    visibility: visible;
+  }
+`;
+const CloseAnimation = keyframes`
+  from {
+    margin-top: 1rem;
+    padding: 1rem;
+    max-height: 150px;
+    opacity: 1;
+    visibility: visible;
+  }
+  to {
+    margin-top: 0rem;
+    padding: 0rem;
+    max-height: 0;
+    opacity: 0;
+    visibility: hidden;
+  }
+`;
 
 const ModalBG = styled.div`
   position: fixed;
@@ -21,7 +57,7 @@ const Component = styled.section`
   align-items: center;
   padding: 10px;
   margin: auto;
-  position: static;
+  position: fixed;
   left: 0;
   top: 0;
   right: 0;
@@ -30,10 +66,10 @@ const Component = styled.section`
   transition: all 0.3s ease;
 `;
 
-const Logo = styled.h1`
+const Logo = styled.h1<{ fontSize: string }>`
   font-family: ${({ theme }) => theme.fonts.logo};
   font-weight: bolder;
-  font-size: 60px;
+  font-size: ${({ fontSize }) => (fontSize ? '50px' : '60px')};
   background: linear-gradient(to right bottom, #ffa69e, #507dff);
   color: transparent;
   background-clip: text;
@@ -163,45 +199,123 @@ const AboutSubButton = styled.button`
   color: #999;
 `;
 
-const AboutSubMenuList = styled.ul<{ visibility?: string }>`
-  display: ${({ visibility }) => visibility};
-  margin-top: 1rem;
-  background: #f3f3f3;
-  padding: 1rem;
-  color: #777;
+const AboutSubMenuList = styled.ul`
+  position: relative;
+  opacity: 0;
+  visibility: hidden;
   overflow: hidden;
 
+  background: #f3f3f3;
+  color: #777;
   transition: all 0.3s ease;
+  max-height: 0;
+
+  &.open {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    animation: ${OpenAnimation} 0.5s ease-in-out forwards;
+  }
+
+  &.close {
+    animation: ${CloseAnimation} 0.5s ease-in-out forwards;
+  }
 `;
 
 const AboutSubMenuItem = styled.li`
   font-weight: 500;
 `;
 
-const MobileHeader = () => {
+const User = styled.div`
+  position: absolute;
+  top: 15px;
+  left: 0;
+  cursor: pointer;
+
+  .username {
+    margin-left: 1rem;
+  }
+
+  .userSubMenu {
+    opacity: 0;
+    visibility: hidden;
+    overflow: hidden;
+    /* margin-top: 0.5rem; */
+    width: 320px;
+    max-height: 0;
+    /* padding: 0.5rem 1rem; */
+    position: relative;
+    background-color: #f3f3f3;
+    z-index: 10;
+
+    &.open {
+      display: block;
+      opacity: 1;
+      visibility: visible;
+      animation: ${OpenAnimation} 0.5s ease-in-out forwards;
+    }
+
+    &.close {
+      animation: ${CloseAnimation} 0.5s ease-in-out forwards;
+    }
+
+    li {
+      padding: 0.5rem 0;
+    }
+  }
+`;
+
+const MobileHeader = ({ user }: any) => {
   const [isMenu, setIsMenu] = useState<boolean>(false);
   const [isAboutSubMenu, setIsAboutSubMenu] = useState<boolean>(false);
-  const [visibility, setVisibility] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
   const comRef = useRef<any>();
+  const aboutSubMenuRef = useRef<any>();
+  const userSubMenuRef = useRef<any>();
+
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
   const onMenuClick = () => {
     setIsMenu((prev) => !prev);
   };
 
-  const onAboutSubMenuClick = () => {
-    if (isAboutSubMenu) {
-      setIsAboutSubMenu(false);
+  const onUserClick = () => {
+    const item = userSubMenuRef.current;
+
+    if (item.classList.contains('open')) {
+      item.classList.remove('open');
+      item.classList.add('close');
     } else {
-      setIsAboutSubMenu((prev) => !prev);
-      setVisibility(true);
+      item.classList.remove('close');
+      item.classList.add('open');
     }
   };
+
+  const onAboutSubMenuClick = () => {
+    const item = aboutSubMenuRef.current;
+    setIsAboutSubMenu((prev) => !prev);
+
+    if (item.classList.contains('open')) {
+      item.classList.remove('open');
+      item.classList.add('close');
+    } else {
+      item.classList.remove('close');
+      item.classList.add('open');
+    }
+  };
+
+  const onLogout = () => {
+    if (user && user.provider === 'kakao') {
+      dispatch(fetchByKakaoLogout(user.snsId));
+    }
+    dispatch(logout());
+    setIsMenu(false);
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.screenY || document.documentElement.scrollTop;
-
       const scrollThreshold = 10;
 
       if (scrollTop > scrollThreshold && comRef.current) {
@@ -217,14 +331,6 @@ const MobileHeader = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (!isAboutSubMenu) {
-      setTimeout(() => {
-        setVisibility(false);
-      }, 400);
-    }
-  }, [isAboutSubMenu]);
-
   return (
     <>
       {isMenu && <ModalBG />}
@@ -232,6 +338,21 @@ const MobileHeader = () => {
       <Component ref={comRef} className={isScrolled ? 'header-shadow' : ''}>
         <SideMenu ismenu={isMenu ? 'true' : ''}>
           <SideMenuList>
+            {user && (
+              <User onClick={onUserClick}>
+                <span className='username'>{user.username}</span>
+
+                <ul className='userSubMenu' ref={userSubMenuRef}>
+                  <CustomLink to='/pages/mypage' onMenuClick={onMenuClick}>
+                    <li>MyPage</li>
+                  </CustomLink>
+                  <CustomLink to='/pages/post' onMenuClick={onMenuClick}>
+                    <li>POST</li>
+                  </CustomLink>
+                  <li onClick={onLogout}>LOGOUT</li>
+                </ul>
+              </User>
+            )}
             <SideMenuCloseBtn>
               <AiOutlineClose size={30} color={'#777'} onClick={onMenuClick} />
             </SideMenuCloseBtn>
@@ -252,12 +373,7 @@ const MobileHeader = () => {
               </AboutSubButton>
 
               {/* About 서브 메뉴 */}
-              <AboutSubMenuList
-                className={
-                  isAboutSubMenu ? 'fadeInDropdown' : 'fadeOutDropdown'
-                }
-                visibility={visibility ? 'block' : 'none'}
-              >
+              <AboutSubMenuList ref={aboutSubMenuRef}>
                 <AboutSubMenuItem>
                   <CustomLink to='/pages/about' onMenuClick={onMenuClick}>
                     about
@@ -286,15 +402,17 @@ const MobileHeader = () => {
                 news
               </CustomLink>
             </SideMenuItem>
-            <SideMenuItem>
-              <CustomLink to='/pages/signin' onMenuClick={onMenuClick}>
-                sign in
-              </CustomLink>
-            </SideMenuItem>
+            {!user && (
+              <SideMenuItem>
+                <CustomLink to='/pages/signin' onMenuClick={onMenuClick}>
+                  sign in
+                </CustomLink>
+              </SideMenuItem>
+            )}
           </SideMenuList>
         </SideMenu>
 
-        <Logo className={isScrolled ? 'header-font-size' : ''}>
+        <Logo fontSize={isScrolled ? 'true' : ''}>
           <CustomLink to='/' onMenuClick={onMenuClick}>
             Plant
           </CustomLink>

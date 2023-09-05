@@ -1,7 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import CustomLink from '../common/CustomLink';
+import { ThunkDispatch } from '@reduxjs/toolkit';
+import { useDispatch } from 'react-redux';
+import { logout } from '../../store';
+import { fetchByKakaoLogout } from '../../store/authSlice';
 
 const Component = styled.section`
   width: 100%;
@@ -19,10 +22,10 @@ const Component = styled.section`
   background-color: rgb(255, 255, 255);
 `;
 
-const Logo = styled.h1`
+const Logo = styled.h1<{ fontSize: string }>`
   font-family: ${({ theme }) => theme.fonts.logo};
   font-weight: bolder;
-  font-size: 60px;
+  font-size: ${({ fontSize }) => (fontSize ? '50px' : '60px')};
   background: linear-gradient(to right bottom, #ffa69e, #507dff);
   color: transparent;
   background-clip: text;
@@ -49,7 +52,7 @@ const MenuItem = styled.li`
   padding: 0 2.5rem;
 `;
 
-const AboutSubMenu = styled.div`
+const SubMenu = styled.div`
   min-width: 160px;
   position: absolute;
   border-top: 1px solid #777;
@@ -60,21 +63,40 @@ const AboutSubMenu = styled.div`
   opacity: 0;
   transform: translateY(-4px);
   transition: all 0.2s linear;
+  font-family: ${({ theme }) => theme.fonts.logo};
 
   li {
+    cursor: pointer;
     padding: 1rem;
   }
 `;
 
-const PcHeader = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
+const User = styled.span`
+  font-weight: bold;
+  font-family: ${({ theme }) => theme.fonts.normally};
+`;
 
+const PcHeader = ({ user }: any) => {
+  const [isScrolled, setIsScrolled] = useState(false);
   const comRef = useRef<any>();
+
   const aboutRef = useRef<any>();
+  const userRef = useRef<any>();
+
   const aboutSubMenuRef = useRef<any>();
+  const userSubMenuRef = useRef<any>();
+
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+
+  const onLogout = () => {
+    if (user && user.provider === 'kakao') {
+      dispatch(fetchByKakaoLogout(user.snsId));
+    }
+    dispatch(logout());
+  };
 
   useEffect(() => {
-    const handleScroll = () => {
+    const onScroll = () => {
       const scrollTop = window.screenY || document.documentElement.scrollTop;
 
       const scrollThreshold = 10; //
@@ -86,51 +108,85 @@ const PcHeader = () => {
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', onScroll);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', onScroll);
     };
   }, []);
 
-  // About subMenu 활성화
+  // subMenu 활성화
   useEffect(() => {
-    const handleMouseOver = () => {
-      if (aboutSubMenuRef.current) {
+    const onMouseOver = (status: string) => {
+      if (status === 'aboutSubMenu' && aboutSubMenuRef.current) {
         aboutSubMenuRef.current.style.visibility = 'visible';
         aboutSubMenuRef.current.style.opacity = '1';
         aboutSubMenuRef.current.style.transform = 'translateY(0px)';
       }
+      if (status === 'userSubMenu' && userSubMenuRef.current) {
+        userSubMenuRef.current.style.visibility = 'visible';
+        userSubMenuRef.current.style.opacity = '1';
+        userSubMenuRef.current.style.transform = 'translateY(0px)';
+      }
     };
 
-    const handleMouseOut = () => {
-      if (aboutSubMenuRef.current) {
+    const onMouseOut = (status: string) => {
+      if (status === 'aboutSubMenu' && aboutSubMenuRef.current) {
         aboutSubMenuRef.current.style.visibility = 'hidden';
         aboutSubMenuRef.current.style.opacity = '0';
         aboutSubMenuRef.current.style.transform = 'translateY(-4px)';
       }
+      if (status === 'userSubMenu' && userSubMenuRef.current) {
+        userSubMenuRef.current.style.visibility = 'hidden';
+        userSubMenuRef.current.style.opacity = '0';
+        userSubMenuRef.current.style.transform = 'translateY(-4px)';
+      }
     };
 
     const aboutRefCurrent = aboutRef.current;
+    const userRefCurrent = userRef.current;
 
-    aboutRefCurrent.addEventListener('mouseover', handleMouseOver);
-    aboutRefCurrent.addEventListener('mouseout', handleMouseOut);
+    aboutRefCurrent.addEventListener('mouseover', () =>
+      onMouseOver('aboutSubMenu')
+    );
+    aboutRefCurrent.addEventListener('mouseout', () =>
+      onMouseOut('aboutSubMenu')
+    );
+
+    userRefCurrent.addEventListener('mouseover', () =>
+      onMouseOver('userSubMenu')
+    );
+    userRefCurrent.addEventListener('mouseout', () =>
+      onMouseOut('userSubMenu')
+    );
 
     return () => {
-      aboutRefCurrent.removeEventListener('mouseover', handleMouseOver);
-      aboutRefCurrent.removeEventListener('mouseout', handleMouseOut);
+      aboutRefCurrent.removeEventListener('mouseover', () =>
+        onMouseOver('aboutSubMenu')
+      );
+      aboutRefCurrent.removeEventListener('mouseout', () =>
+        onMouseOut('aboutSubMenu')
+      );
+
+      userRefCurrent.addEventListener('mouseover', () =>
+        onMouseOut('userSubMenu')
+      );
+      userRefCurrent.addEventListener('mouseout', () =>
+        onMouseOut('userSubMenu')
+      );
     };
   }, []);
 
   return (
     <Component ref={comRef} className={isScrolled ? 'header-shadow' : ''}>
-      <Logo className={isScrolled ? 'header-font-size' : ''}>
+      {/* <Logo className={isScrolled ? 'header-font-size' : ''}> */}
+      <Logo fontSize={isScrolled ? 'true' : ''}>
         <CustomLink to='/'>Plant</CustomLink>
       </Logo>
       <Menu>
         <MenuItem ref={aboutRef}>
           <CustomLink to='/pages/about'>about glory</CustomLink>
           {/* About 서브메뉴 */}
-          <AboutSubMenu ref={aboutSubMenuRef}>
+          <SubMenu ref={aboutSubMenuRef}>
             <ul>
               <li>
                 <CustomLink to='/pages/about'>ABOUT</CustomLink>
@@ -139,7 +195,7 @@ const PcHeader = () => {
                 <CustomLink to='/pages/history'>HISTORY</CustomLink>
               </li>
             </ul>
-          </AboutSubMenu>
+          </SubMenu>
         </MenuItem>
 
         <MenuItem>
@@ -151,9 +207,27 @@ const PcHeader = () => {
         <MenuItem>
           <CustomLink to='/pages/news'>news</CustomLink>
         </MenuItem>
-        <MenuItem>
-          <CustomLink to='/pages/signin'>sign in</CustomLink>
-        </MenuItem>
+
+        {user ? (
+          <MenuItem ref={userRef}>
+            <User>
+              <CustomLink to='/pages/mypage'>{user.username}'</CustomLink>
+              {/* user 서브메뉴 */}
+              <SubMenu ref={userSubMenuRef}>
+                <ul>
+                  <li>
+                    <CustomLink to='/pages/post'>POST</CustomLink>
+                  </li>
+                  <li onClick={onLogout}>Logout</li>
+                </ul>
+              </SubMenu>
+            </User>
+          </MenuItem>
+        ) : (
+          <MenuItem ref={userRef}>
+            <CustomLink to='/pages/signin'>sign in</CustomLink>
+          </MenuItem>
+        )}
       </Menu>
     </Component>
   );

@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { styled } from 'styled-components';
-import Section3Gallery from './Section3Gallery';
+import Galleries from '../Galleries';
+import { useDispatch, useSelector } from 'react-redux';
+import { ThunkDispatch } from '@reduxjs/toolkit';
+import { fetchGetPosts } from '../../store/postsSlice';
+import { RootState } from '../../store';
 
 const Component = styled.section`
   background-image: linear-gradient(to bottom right, #fdcec4, #ddc5d1, #c3c1d9);
 `;
 
 const Wrapper = styled.div`
-  padding-top: 80px;
   padding-top: 50px;
   padding-bottom: calc((100vw * 0.0078125 + (1280px - 100vw) * 0.0023777) * 14);
 `;
@@ -48,6 +51,16 @@ const Text = styled.div`
 `;
 
 const Section3 = () => {
+  let page = 1;
+
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+
+  const { posts } = useSelector((state: RootState) => state.posts);
+
+  useEffect(() => {
+    dispatch(fetchGetPosts(page));
+  }, []);
+
   return (
     <Component>
       <Wrapper>
@@ -64,7 +77,7 @@ const Section3 = () => {
           </p>
         </Text>
 
-        <Section3Gallery />
+        <Galleries posts={posts} />
       </Wrapper>
     </Component>
   );

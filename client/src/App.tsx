@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import GlobalStyles from './GlobalStyles';
-import Home from './components/Home';
-import Header from './components/header/Header';
-import Footer from './components/Footer';
 import { ThemeProvider } from 'styled-components';
 import { StyleSheetManager } from 'styled-components';
+import { CookiesProvider } from 'react-cookie';
+import { useDispatch } from 'react-redux';
+import { fetchByAuth } from './store/authSlice';
+import { ThunkDispatch } from '@reduxjs/toolkit';
 import isPropValid from '@emotion/is-prop-valid';
+
 import About from './components/About';
 import History from './components/History/History';
 import Album from './components/Album';
@@ -14,6 +16,14 @@ import Gallery from './components/Gallery';
 import News from './components/News/News';
 import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
+import Post from './components/Post';
+import KakaoCallBack from './components/KakaoCallBack';
+import MyPage from './components/MyPage/MyPage';
+import Home from './components/Home';
+import Header from './components/header/Header';
+import Footer from './components/Footer';
+import PrivateRoute from './components/PrivateRoute';
+import EditPost from './components/EditPost';
 
 const theme = {
   fonts: {
@@ -24,23 +34,41 @@ const theme = {
 };
 
 const App = () => {
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+
+  useEffect(() => {
+    dispatch(fetchByAuth());
+  }, []);
+
   return (
     <StyleSheetManager shouldForwardProp={(prop) => isPropValid(prop)}>
       <ThemeProvider theme={theme}>
-        <GlobalStyles />
-        <Header />
+        <CookiesProvider>
+          <GlobalStyles />
+          <Header />
 
-        <Routes>
-          <Route path='/' element={<Home />} />
-          <Route path='/pages/About' element={<About />} />
-          <Route path='/pages/history' element={<History />} />
-          <Route path='/pages/album' element={<Album />} />
-          <Route path='/pages/gallery' element={<Gallery />} />
-          <Route path='/pages/news' element={<News />} />
-          <Route path='/pages/signin' element={<SignIn />} />
-          <Route path='/pages/signup' element={<SignUp />} />
-        </Routes>
-        <Footer />
+          <Routes>
+            <Route path='/' element={<Home />} />
+            <Route path='/pages/About' element={<About />} />
+            <Route path='/pages/history' element={<History />} />
+            <Route path='/pages/album' element={<Album />} />
+            <Route path='/pages/gallery' element={<Gallery />} />
+            <Route path='/pages/news' element={<News />} />
+            <Route path='/pages/signin' element={<SignIn />} />
+            <Route path='/pages/signup' element={<SignUp />} />
+            <Route element={<PrivateRoute />}>
+              <Route path='/pages/mypage' element={<MyPage />} />
+            </Route>
+            <Route element={<PrivateRoute />}>
+              <Route path='/pages/edit/:id' element={<EditPost />} />
+            </Route>
+            <Route element={<PrivateRoute />}>
+              <Route path='/pages/post' element={<Post />} />
+            </Route>
+            <Route path='/auth/kakao/callback' element={<KakaoCallBack />} />
+          </Routes>
+          <Footer />
+        </CookiesProvider>
       </ThemeProvider>
     </StyleSheetManager>
   );

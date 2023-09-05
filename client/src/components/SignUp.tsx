@@ -1,7 +1,19 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, {
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { keyframes, styled } from 'styled-components';
 import { RiKakaoTalkFill } from 'react-icons/ri';
+import { ThunkDispatch } from '@reduxjs/toolkit';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchByAuth } from '../store/authSlice';
+import axios from 'axios';
+import { RootState } from '../store';
+import SocialKakao from './SocialKakao';
 
 // 페이지 전환효과
 const ScreenFrames = keyframes`
@@ -80,11 +92,13 @@ const Input = styled.input`
   }
 `;
 
-const Button = styled.button`
+const Button = styled.button<{ buttonStyles?: string }>`
   margin-top: 1rem;
   padding: 0.5rem;
-  color: #bbb;
-  background-color: #fff9c9;
+
+  color: ${({ buttonStyles }) => (buttonStyles ? '#000' : '#bbb')};
+  background-color: ${({ buttonStyles }) =>
+    buttonStyles ? 'yellow' : '#fff9c9'};
   letter-spacing: -1px;
   border-radius: 5px;
 `;
@@ -109,27 +123,104 @@ const Box = styled.div`
   }
 `;
 
-const KakaoButton = styled(Button)`
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: yellow;
-  color: #bbb;
-  font-weight: bold;
-  font-size: 0.875rem;
-  transition: all 0.3s ease;
-
-  &:hover {
-    color: #000;
-  }
-
-  @media (max-width: 500px) {
-    color: #000;
-  }
+const Message = styled.div`
+  text-align: center;
+  margin-top: 0.5rem;
+  color: tomato;
+  font-size: 0.785rem;
 `;
 
 const SignUp = () => {
+  const [formData, setFormData] = useState({
+    email: '',
+    username: '',
+    password: '',
+  });
+  const { email, username, password } = formData;
+
+  const [message, setMessage] = useState('');
+  const [buttonStyles, setButtonStyles] = useState(false);
+  const { user } = useSelector((state: RootState) => state.auth);
+
+  const navigator = useNavigate();
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+  const inputRef = useRef<HTMLInputElement[]>([]);
+
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value.replace(/\s/g, ''),
+    });
+  };
+
+  const onSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    if (!username || username === '') {
+      inputRef.current[0].focus();
+      return setMessage('이름을 입력해주세요');
+    }
+    if (username.length < 2) {
+      inputRef.current[0].focus();
+      return setMessage('이름이 너무 짧아요(최소 두글자)');
+    }
+    if (username.length > 5) {
+      inputRef.current[0].focus();
+      return setMessage('이름이 너무 길어요(최소 다섯글자)');
+    }
+    if (!email || email === '') {
+      inputRef.current[1].focus();
+      return setMessage('이메일을 입력해주세요');
+    }
+
+    if (password.length < 6) {
+      inputRef.current[2].focus();
+      return setMessage('비밀번호는 6글자이상 입력해주세요');
+    }
+    if (password.length > 6) {
+      inputRef.current[2].focus();
+      return setMessage('비밀번호는 6글자까지만 입력해주세요');
+    }
+
+    try {
+      const res = await axios.post('/api/auth/register', {
+        username,
+        email,
+        password,
+      });
+
+      if (res.data?.token) {
+        localStorage.setItem('token', JSON.stringify(res.data.token));
+
+        dispatch(fetchByAuth());
+        navigator('/');
+      }
+    } catch (err: any) {
+      const message = err.response.data.msg;
+      setMessage(message);
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    if (email && username && password && password.length >= 6) {
+      setButtonStyles(true);
+    }
+
+    if (
+      email === '' ||
+      username === '' ||
+      password === '' ||
+      password.length < 6
+    ) {
+      setButtonStyles(false);
+    }
+  }, [email, username, password]);
+
+  if (user) {
+    return <Navigate to='/' />;
+  }
+
   return (
     <Component>
       <Wrapper>
@@ -140,19 +231,33 @@ const SignUp = () => {
             다가가보세요
           </p>
         </Logo>
-        <Form>
+        <Form onSubmit={onSubmit}>
           <Input
             type='type'
             placeholder='이름 입력'
             style={{ marginBottom: '.5rem' }}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e)}
+            name='username'
+            ref={(el: HTMLInputElement) => (inputRef.current[0] = el)}
           />
           <Input
             type='email'
             placeholder='이메일 입력'
             style={{ marginBottom: '.5rem' }}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e)}
+            name='email'
+            ref={(el: HTMLInputElement) => (inputRef.current[1] = el)}
           />
-          <Input type='password' placeholder='비밀번호 입력' />
-          <Button>회원가입</Button>
+          <Input
+            type='password'
+            placeholder='비밀번호 입력'
+            name='password'
+            onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e)}
+            ref={(el: HTMLInputElement) => (inputRef.current[2] = el)}
+          />
+          {message && <Message>{message}</Message>}
+
+          <Button buttonStyles={buttonStyles ? 'true' : ''}>회원가입</Button>
         </Form>
         <Box>
           <Link to='/pages/signin'>로그인</Link>
@@ -164,9 +269,7 @@ const SignUp = () => {
           <hr style={{ width: '42%' }} />
         </Box>
         <Box>
-          <KakaoButton>
-            <RiKakaoTalkFill size={29} /> &nbsp;카카오계정으로 회원가입
-          </KakaoButton>
+          <SocialKakao />
         </Box>
       </Wrapper>
     </Component>

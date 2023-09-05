@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { keyframes, styled } from 'styled-components';
-import VideoModal from './VideoModal';
+import VideoModal from './Modal/VideoModal';
 import albumData from '../utils/albumData';
 // 페이지 전환효과
 const ScreenFrames = keyframes`

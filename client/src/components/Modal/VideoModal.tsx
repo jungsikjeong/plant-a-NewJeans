@@ -75,11 +75,11 @@ const VideoModal = ({ videoId, onModalClose }: ModalTypes) => {
 
     if (videoID) {
       const apiUrl = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoID}&key=${API_KEY}`;
+
       fetch(apiUrl)
         .then((response) => response.json())
         .then((data) => {
           setVideoData(data.items[0].snippet);
-          //   setVideoData('error');
         })
         .catch((err) => {
           console.log(err);
