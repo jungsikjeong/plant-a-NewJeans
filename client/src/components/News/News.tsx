@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 import { styled, keyframes } from 'styled-components';
 import NewList from './NewList';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { ThunkDispatch } from '@reduxjs/toolkit';
-import { fetchGetNewsPosts } from '../../store/newsPosts';
+import {
+  fetchAllNewsPosts,
+  fetchSearchNewsPosts,
+} from '../../store/newsPostsSlice';
 import Loading from '../Loading';
 
 // 페이지 전환효과
@@ -106,14 +109,24 @@ const NewsSearch = styled.div`
 
 const News = () => {
   const [itemsPerPage, setItemsPerPage] = useState(3);
+  const [searchOption, setSearchOption] = useState('title');
+  const [searchInput, setSearchInput] = useState('');
 
   const { newsPosts, loading } = useSelector(
     (state: RootState) => state.newsPosts
   );
+
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
+  const onSearchSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    const searchData = { option: searchOption, inputValue: searchInput };
+    dispatch(fetchSearchNewsPosts(searchData)); // 페이지 번호 1로 고정 (초기 페이지)
+  };
+
   useEffect(() => {
-    dispatch(fetchGetNewsPosts());
+    dispatch(fetchAllNewsPosts());
   }, []);
 
   return (
@@ -128,14 +141,23 @@ const News = () => {
 
         <NewsWrapper>
           <NewsSearch>
-            <select>
+            <select
+              onChange={(e) => setSearchOption(e.target.value)}
+              value={searchOption}
+            >
               <option value='title'>제목</option>
               <option value='contents'>내용</option>
-              <option value='title+contents'>제목+내용</option>
+              <option value='titleAndContent'>제목+내용</option>
             </select>
             &nbsp;
-            <input type='text' />
-            <button>검색</button>
+            <form onSubmit={onSearchSubmit}>
+              <input
+                type='text'
+                onChange={(e) => setSearchInput(e.target.value)}
+                value={searchInput}
+              />
+              <button onClick={onSearchSubmit}>검색</button>
+            </form>
           </NewsSearch>
 
           <NewList itemsPerPage={itemsPerPage} items={newsPosts} />

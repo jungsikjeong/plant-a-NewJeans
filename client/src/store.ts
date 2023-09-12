@@ -5,7 +5,7 @@ import { uploadImageSlice } from './store/uploadImageSlice';
 import { postModalSlice } from './store/postModalSlice';
 import { postsSlice } from './store/postsSlice';
 import { postSlice } from './store/postSlice';
-import { newsPostsSlice } from './store/newsPosts';
+import { newsPostsSlice } from './store/newsPostsSlice';
 
 export const { logout } = authSlice.actions;
 export const { setImages, oldImages, removeThatImage, removeAllImage } =

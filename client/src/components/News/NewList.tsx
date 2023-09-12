@@ -34,7 +34,7 @@ interface IPaginatedItems {
 }
 
 const NewList = ({ itemsPerPage, items }: IPaginatedItems) => {
-  // 여기서는 항목 오프셋을 사용합니다. 페이지 오프셋을 사용할 수도 있음
+  // 여기서는 항목 오프셋을 사용함 페이지 오프셋을 사용할 수도 있음
   // 작업 중인 API 또는 데이터를 따름
   const [itemOffset, setItemOffset] = useState(0);
 

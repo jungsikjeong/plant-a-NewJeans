@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const connectDB = require('./config/db');
+const morgan = require('morgan');
 
 const { passport } = require('./middleware/auth');
 const path = require('path');
@@ -10,6 +11,13 @@ const app = express();
 connectDB();
 
 app.use(express.json({ extended: false }));
+
+// 로그 기록
+if (process.env.NODE_ENV === 'production') {
+  app.use(morgan('combined')); // 배포환경이면
+} else {
+  app.use(morgan('dev')); // 개발환경이면
+}
 
 // Define Routes
 app.use('/api/auth', require('./routes/api/auth'));

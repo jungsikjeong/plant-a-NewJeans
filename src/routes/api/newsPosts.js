@@ -5,7 +5,7 @@ const AWS = require('aws-sdk');
 const isLogin = require('../../middleware/isLogin');
 const upload = require('../../middleware/multer');
 
-const NewsPost = require('../../models/newspost');
+const NewsPost = require('../../models/NewsPost');
 const User = require('../../models/User');
 
 function dataFun() {
@@ -31,6 +31,7 @@ router.get('/', async (req, res) => {
   const page = parseInt(req.query.page || '1', 10);
   try {
     const itemsPerPage = 3;
+
     const posts = await NewsPost.find()
       .sort({
         _id: -1,
@@ -52,6 +53,47 @@ router.get('/', async (req, res) => {
     res.header('Last-Page', postCount);
 
     return res.json(posts);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+/** 게시글 검색 */
+router.get('/search', async (req, res) => {
+  try {
+    const { option, inputValue } = req.query;
+
+    let searchCondition = {};
+
+    switch (option) {
+      case 'title':
+        searchCondition = {
+          title: { $regex: inputValue, $options: 'i' },
+        };
+        break;
+      case 'contents':
+        console.log(option);
+        searchCondition = {
+          contents: { $regex: inputValue, $options: 'i' },
+        };
+        break;
+      case 'titleAndContent':
+        searchCondition = {
+          $or: [
+            { title: { $regex: inputValue, $options: 'i' } },
+            { contents: { $regex: inputValue, $options: 'i' } },
+          ],
+        };
+        break;
+      default:
+        break;
+    }
+    const result = await NewsPost.find(searchCondition)
+      .sort({ _id: -1 })
+      .lean();
+
+    return res.json(result);
   } catch (error) {
     console.error(error.message);
     res.status(500).send('Server Error');
