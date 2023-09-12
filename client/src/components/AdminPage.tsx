@@ -3,7 +3,7 @@ import { keyframes, styled } from 'styled-components';
 import { Button } from './common/Styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { ThunkDispatch } from '@reduxjs/toolkit';
 import { Tooltip as ReactTooltip } from 'react-tooltip';
 import { IoMdArrowRoundBack } from 'react-icons/io';
@@ -132,40 +132,20 @@ const NotPosts = styled.div`
 `;
 
 const AdminPage = () => {
-  const [formVisible, setFormVisible] = useState(false);
-  const [userCheck, setUserCheck] = useState(false);
-  const [selectDeleteMode, setSelectDeleteMode] = useState(false); // 게시글 선택 삭제 모드
-  const [selectedPosts, setSelectedPosts] = useState<string[]>([]); // 게시글 삭제할 포스터
   const { user, loading: userLoading }: any = useSelector(
     (state: RootState) => state.auth
   );
   const { posts, loading } = useSelector((state: RootState) => state.posts);
 
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+
   const navigator = useNavigate();
 
-  // 정보 변경하기전에 확인하는 코드
-  const onSetUserCheck = () => {
-    // 소셜로그인한 유저라면, 사용자 확인 할 필요가 없음
-    if (user.provider !== '') {
-      return setFormVisible((prev) => !prev);
-    }
+  if (!userLoading && user && user.manager !== 'admin') {
+    alert('관리자가 아니면 접근할 수 없습니다.');
 
-    if (!formVisible) {
-      setUserCheck((prev) => !prev);
-    } else if (formVisible) {
-      setFormVisible((prev) => !prev);
-      setUserCheck(false);
-    }
-  };
-
-  useEffect(() => {
-    // dispatch(fetchMyPageGetPosts());
-  }, []);
-
-  //   if (loading || userLoading) {
-  //     return <Loading />;
-  //   }
+    return <Navigate to='/' />;
+  }
 
   return (
     <Component>
