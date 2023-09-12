@@ -32,6 +32,7 @@ const Box = styled.div<{ heightStyle?: string }>`
 
   img {
     width: 100%;
+    height: 100%;
     object-fit: cover;
     border-radius: 0.625rem;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);

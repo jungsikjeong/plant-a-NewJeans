@@ -119,7 +119,10 @@ const SideOpenBtn = styled.button<{ ismenu: string }>`
       ismenu
         ? 'translateY(-5px) rotate(45deg)'
         : 'translateY(-10px) rotate(0deg)'};
-    transition: transform 0.2s, width 0.2s 0.2s, right 0.2s 0.2s;
+    transition:
+      transform 0.2s,
+      width 0.2s 0.2s,
+      right 0.2s 0.2s;
     background: rgba(0, 0, 0, 0.6);
   }
 
@@ -138,7 +141,10 @@ const SideOpenBtn = styled.button<{ ismenu: string }>`
       ismenu
         ? ' translateY(5px) rotate(-45deg)'
         : 'translateY(10px) rotate(0deg)'};
-    transition: transform 0.2s, width 0.2s 0.2s, right 0.2s 0.2s;
+    transition:
+      transform 0.2s,
+      width 0.2s 0.2s,
+      right 0.2s 0.2s;
   }
 
   strong {
@@ -343,9 +349,15 @@ const MobileHeader = ({ user }: any) => {
                 <span className='username'>{user.username}</span>
 
                 <ul className='userSubMenu' ref={userSubMenuRef}>
-                  <CustomLink to='/pages/mypage' onMenuClick={onMenuClick}>
-                    <li>MyPage</li>
-                  </CustomLink>
+                  {user.manager === 'admin' ? (
+                    <CustomLink to='/pages/adminpage' onMenuClick={onMenuClick}>
+                      <li>AdminPage</li>
+                    </CustomLink>
+                  ) : (
+                    <CustomLink to='/pages/mypage' onMenuClick={onMenuClick}>
+                      <li>MyPage</li>
+                    </CustomLink>
+                  )}
                   <CustomLink to='/pages/post' onMenuClick={onMenuClick}>
                     <li>POST</li>
                   </CustomLink>

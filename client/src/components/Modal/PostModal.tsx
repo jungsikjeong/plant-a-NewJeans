@@ -8,7 +8,7 @@ import { Carousel } from 'react-responsive-carousel';
 import { Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from '@reduxjs/toolkit';
-import { RootState, setIsPostModal, setPostModalClose } from '../../store';
+import { RootState, setPostModalClose } from '../../store';
 
 const Component = styled.div`
   position: fixed;
@@ -54,6 +54,8 @@ const ImageWrap = styled.div`
   }
 
   img {
+    width: 100%;
+    height: 100%;
     max-width: 600px;
     object-fit: cover;
   }
@@ -201,9 +203,11 @@ const PostModal = ({
                   }}
                 >
                   <ImageWrap>
-                    <Close onClick={onModalClose}>
-                      <AiOutlineClose />
-                    </Close>
+                    <BtnWrap>
+                      <Close onClick={onModalClose}>
+                        <AiOutlineClose />
+                      </Close>
+                    </BtnWrap>
 
                     <Carousel
                       renderArrowPrev={(onClickHandler, hasPrev, label) =>

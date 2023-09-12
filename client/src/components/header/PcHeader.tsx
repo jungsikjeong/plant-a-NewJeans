@@ -209,20 +209,41 @@ const PcHeader = ({ user }: any) => {
         </MenuItem>
 
         {user ? (
-          <MenuItem ref={userRef}>
-            <User>
-              <CustomLink to='/pages/mypage'>{user.username}'</CustomLink>
-              {/* user 서브메뉴 */}
-              <SubMenu ref={userSubMenuRef}>
-                <ul>
-                  <li>
-                    <CustomLink to='/pages/post'>POST</CustomLink>
-                  </li>
-                  <li onClick={onLogout}>Logout</li>
-                </ul>
-              </SubMenu>
-            </User>
-          </MenuItem>
+          <>
+            {user.manager === 'admin' ? (
+              <MenuItem ref={userRef}>
+                <User>
+                  <CustomLink to='/pages/adminpage'>
+                    {user.username}'
+                  </CustomLink>
+                  {/* user 서브메뉴 */}
+                  <SubMenu ref={userSubMenuRef}>
+                    <ul>
+                      <li>
+                        <CustomLink to='/pages/newsPost'>NEWS'POST</CustomLink>
+                      </li>
+                      <li onClick={onLogout}>Logout</li>
+                    </ul>
+                  </SubMenu>
+                </User>
+              </MenuItem>
+            ) : (
+              <MenuItem ref={userRef}>
+                <User>
+                  <CustomLink to='/pages/mypage'>{user.username}'</CustomLink>
+                  {/* user 서브메뉴 */}
+                  <SubMenu ref={userSubMenuRef}>
+                    <ul>
+                      <li>
+                        <CustomLink to='/pages/post'>POST</CustomLink>
+                      </li>
+                      <li onClick={onLogout}>Logout</li>
+                    </ul>
+                  </SubMenu>
+                </User>
+              </MenuItem>
+            )}
+          </>
         ) : (
           <MenuItem ref={userRef}>
             <CustomLink to='/pages/signin'>sign in</CustomLink>

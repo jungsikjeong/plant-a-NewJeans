@@ -27,6 +27,8 @@ const Header = () => {
   if (
     pathname === '/pages/post' ||
     pathname === '/pages/mypage' ||
+    pathname === '/pages/newsPost' ||
+    pathname === '/pages/adminpage' ||
     pathname.startsWith('/pages/edit/')
   ) {
     return null;

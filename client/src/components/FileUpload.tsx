@@ -103,6 +103,7 @@ const FileUpload = ({
             index: index,
             url: reader.result as string,
           };
+
           dispatch(setImages(data));
         };
       }

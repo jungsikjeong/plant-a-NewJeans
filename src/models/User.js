@@ -6,6 +6,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  manager: {
+    type: String,
+    default: '',
+  },
   provider: {
     type: String,
     default: '',

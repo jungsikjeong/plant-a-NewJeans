@@ -81,6 +81,8 @@ const Item = styled.li`
   height: 500px;
   cursor: pointer;
   img {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
   }
 
@@ -234,6 +236,7 @@ const Gallery = () => {
           )}
         </List>
 
+        {/* IntersectionObserver */}
         <div ref={sentinelRef} style={{ height: '10px' }}></div>
       </Wrapper>
     </Component>

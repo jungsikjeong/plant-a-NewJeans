@@ -58,6 +58,8 @@ const Box = styled.div<{ height?: string }>`
   }
 
   img {
+    width: 100%;
+    height: 100%;
     object-fit: contain;
     @media (max-width: 640px) {
       height: 150px;

@@ -93,23 +93,33 @@ const SubItem = styled.div`
   &.close {
     animation: ${CloseAnimation} 0.5s ease-in-out forwards;
   }
+`;
 
+const Contents = styled.p`
+  max-height: 600px;
+  overflow-y: scroll;
   img {
-    max-width: 600px;
+    max-height: 600px;
+    object-fit: cover;
+
+    @media (max-width: 765px) {
+      width: 250px;
+    }
   }
 `;
 
 interface INewsItem {
-  id: number;
+  _id: string;
   title: string;
+  contents: string;
   url: string;
 }
 
 const NewsItem = ({ currentItems }: { currentItems: INewsItem[] }) => {
   const subItemRef = useRef<any[]>([]);
 
-  const onItemClick = (itemId: number) => {
-    const item = subItemRef.current[itemId];
+  const onItemClick = (index: number) => {
+    const item = subItemRef.current[index];
 
     if (item.classList.contains('open')) {
       item.classList.remove('open');
@@ -123,12 +133,17 @@ const NewsItem = ({ currentItems }: { currentItems: INewsItem[] }) => {
   return (
     <List>
       {currentItems.map((item, index) => (
-        <Item onClick={() => onItemClick(item.id)} key={index}>
+        <Item onClick={() => onItemClick(index)} key={index}>
           <p className='title'>{item.title}</p>
 
-          <SubItem ref={(el: any) => (subItemRef.current[item.id] = el)}>
+          <SubItem ref={(el: any) => (subItemRef.current[index] = el)}>
             <p className='title'>{item.title}</p>
-            <img src={item.url} alt='' />
+
+            <Contents
+              dangerouslySetInnerHTML={{
+                __html: item.contents,
+              }}
+            ></Contents>
           </SubItem>
         </Item>
       ))}

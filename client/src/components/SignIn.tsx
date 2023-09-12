@@ -181,8 +181,10 @@ const SignIn = () => {
         navigator('/');
       }
     } catch (err: any) {
-      const message = err.response.data.errors.msg;
-      setMessage(message);
+      if (err.response.data.errors.msg) {
+        const message = err.response.data.errors.msg;
+        setMessage(message);
+      }
       console.log(err);
     }
   };

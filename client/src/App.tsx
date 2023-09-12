@@ -24,6 +24,8 @@ import Header from './components/header/Header';
 import Footer from './components/Footer';
 import PrivateRoute from './components/PrivateRoute';
 import EditPost from './components/EditPost';
+import NewsPost from './components/News/NewsPost';
+import AdminPage from './components/AdminPage';
 
 const theme = {
   fonts: {
@@ -59,12 +61,14 @@ const App = () => {
             <Route element={<PrivateRoute />}>
               <Route path='/pages/mypage' element={<MyPage />} />
             </Route>
+            <Route path='/pages/adminpage' element={<AdminPage />} />
             <Route element={<PrivateRoute />}>
               <Route path='/pages/edit/:id' element={<EditPost />} />
             </Route>
             <Route element={<PrivateRoute />}>
               <Route path='/pages/post' element={<Post />} />
             </Route>
+            <Route path='/pages/newsPost' element={<NewsPost />} />
             <Route path='/auth/kakao/callback' element={<KakaoCallBack />} />
           </Routes>
           <Footer />

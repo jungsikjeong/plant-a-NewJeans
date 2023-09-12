@@ -5,14 +5,14 @@ import { styled } from 'styled-components';
 
 const Container = styled.div`
   .quill {
+    .ql-container {
+      height: 10rem;
+    }
     .ql-editor {
     }
 
     .ql-snow {
       border: 1px solid #eee;
-    }
-    .ql-container {
-      height: 10rem;
     }
   }
 `;

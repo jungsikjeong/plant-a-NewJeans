@@ -126,6 +126,8 @@ const ImageArea = styled.div`
     border: 1px solid #333;
 
     img {
+      width: 100%;
+      height: 100%;
       object-fit: cover;
     }
   }

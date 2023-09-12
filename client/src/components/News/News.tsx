@@ -1,7 +1,11 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled, keyframes } from 'styled-components';
-import testData from '../../utils/testData';
 import NewList from './NewList';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../store';
+import { ThunkDispatch } from '@reduxjs/toolkit';
+import { fetchGetNewsPosts } from '../../store/newsPosts';
+import Loading from '../Loading';
 
 // 페이지 전환효과
 const ScreenFrames = keyframes`
@@ -101,8 +105,21 @@ const NewsSearch = styled.div`
 `;
 
 const News = () => {
+  const [itemsPerPage, setItemsPerPage] = useState(3);
+
+  const { newsPosts, loading } = useSelector(
+    (state: RootState) => state.newsPosts
+  );
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+
+  useEffect(() => {
+    dispatch(fetchGetNewsPosts());
+  }, []);
+
   return (
     <Component>
+      {loading && <Loading />}
+
       <Banner />
       <Wrapper>
         <Logo>
@@ -121,7 +138,7 @@ const News = () => {
             <button>검색</button>
           </NewsSearch>
 
-          <NewList itemsPerPage={3} items={testData} />
+          <NewList itemsPerPage={itemsPerPage} items={newsPosts} />
         </NewsWrapper>
       </Wrapper>
     </Component>

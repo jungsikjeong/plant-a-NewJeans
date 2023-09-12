@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from '@reduxjs/toolkit';
 import { fetchGetPosts } from '../../store/postsSlice';
 import { RootState } from '../../store';
+import { Link } from 'react-router-dom';
 
 const Component = styled.section`
   background-image: linear-gradient(to bottom right, #fdcec4, #ddc5d1, #c3c1d9);
@@ -50,6 +51,19 @@ const Text = styled.div`
   }
 `;
 
+const NotPost = styled.div`
+  width: 100%;
+  margin-top: 5rem;
+  text-align: center;
+  font-family: ${({ theme }) => theme.fonts.sentence};
+  color: #999999;
+  font-size: calc(20px - (1280px - 100vw) * 0.0002082);
+  min-height: 100px;
+  @media (max-width: 640px) {
+    margin-top: 3rem;
+  }
+`;
+
 const Section3 = () => {
   let page = 1;
 
@@ -64,20 +78,47 @@ const Section3 = () => {
   return (
     <Component>
       <Wrapper>
-        <Text>
-          <h1>
-            Newjeans.<span>Gallery</span>
-          </h1>
+        {posts.length === 0 ? (
+          <>
+            <Text>
+              <h1>
+                Newjeans.<span>Gallery</span>
+              </h1>
+            </Text>
 
-          <h2>내가 고른 사진이 갤러리에'</h2>
+            <NotPost>
+              <p>
+                앗! 이런 포스터가 없네요...
+                <br />
+                <Link to='/pages/post'>
+                  포스터를{' '}
+                  <span style={{ borderBottom: '1px solid #eee' }}>
+                    작성하러
+                  </span>{' '}
+                  가보실까요?
+                </Link>
+                <br />
+              </p>
+              <br />
+            </NotPost>
+          </>
+        ) : (
+          <>
+            <Text>
+              <h1>
+                Newjeans.<span>Gallery</span>
+              </h1>
 
-          <p>
-            제가 고른 이 사진에 대해 말씀드려 볼게요
-            <br />이 사진은 말이죠...
-          </p>
-        </Text>
+              <h2>내가 고른 사진이 갤러리에'</h2>
 
-        <Galleries posts={posts} />
+              <p>
+                제가 고른 이 사진에 대해 말씀드려 볼게요
+                <br />이 사진은 말이죠...
+              </p>
+            </Text>
+            <Galleries posts={posts} />
+          </>
+        )}
       </Wrapper>
     </Component>
   );
