@@ -177,6 +177,10 @@ const SignIn = () => {
       if (res.data?.token) {
         localStorage.setItem('token', JSON.stringify(res.data.token));
 
+        if (res.data?.userWithoutPassword?.manager === 'admin') {
+          console.log('?');
+          localStorage.setItem('adminToken', JSON.stringify(res.data.token));
+        }
         dispatch(fetchByAuth());
         navigator('/');
       }

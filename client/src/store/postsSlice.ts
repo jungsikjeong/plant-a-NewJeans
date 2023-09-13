@@ -7,6 +7,7 @@ interface IPosts {
   date: string;
   image: string[];
   title: string;
+  username: string;
   user: string;
   __v: number;
   _id: string;

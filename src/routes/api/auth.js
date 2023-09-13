@@ -92,8 +92,9 @@ router.post('/login', async (req, res, next) => {
         const token = jwt.sign({ user: body }, process.env.JWT_SECRET_KEY, {
           expiresIn: '1h',
         });
+        const userWithoutPassword = { ...user._doc, password: undefined };
 
-        return res.json({ token });
+        return res.json({ userWithoutPassword, token });
       });
     } catch (error) {
       return next(error);

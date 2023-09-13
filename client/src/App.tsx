@@ -61,7 +61,9 @@ const App = () => {
             <Route element={<PrivateRoute />}>
               <Route path='/pages/mypage' element={<MyPage />} />
             </Route>
-            <Route path='/pages/adminpage' element={<AdminPage />} />
+            <Route element={<PrivateRoute isAdmin={true} />}>
+              <Route path='/pages/adminpage' element={<AdminPage />} />
+            </Route>
             <Route element={<PrivateRoute />}>
               <Route path='/pages/edit/:id' element={<EditPost />} />
             </Route>

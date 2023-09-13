@@ -227,14 +227,20 @@ router.post('/', isLogin, upload.array('images', 3), async (req, res) => {
   }
 
   try {
+    const user = await User.findOne({ _id: req.user });
+
+    if (!user) {
+      return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+    }
+
     const newPost = new Post({
       title: title,
       contents: contents,
+      username: user.username,
       image: fileName.length !== 0 ? fileName : '',
       user: req.user,
       date: currentDate,
     });
-
     const post = await newPost.save();
     res.json(post);
   } catch (error) {

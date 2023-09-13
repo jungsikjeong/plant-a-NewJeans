@@ -278,7 +278,7 @@ const Post = () => {
             type='text'
             value={title}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setTitle(e.target.value.trim())
+              setTitle(e.target.value)
             }
           />
 

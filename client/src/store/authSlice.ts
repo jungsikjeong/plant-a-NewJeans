@@ -45,6 +45,7 @@ export const authSlice = createSlice({
       // console.log(current(state.user));
       localStorage.removeItem('token');
       localStorage.removeItem('kakaoToken');
+      localStorage.removeItem('adminToken');
       state.user = '';
     },
   },
@@ -64,6 +65,7 @@ export const authSlice = createSlice({
         state.loading = false;
         localStorage.removeItem('token');
         localStorage.removeItem('kakaoToken');
+        localStorage.removeItem('adminToken');
       });
   },
 });

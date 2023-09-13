@@ -1,13 +1,14 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { keyframes, styled } from 'styled-components';
-import { Button } from './common/Styles';
+import { Button } from '../common/Styles';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../store';
+import { RootState } from '../../store';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { ThunkDispatch } from '@reduxjs/toolkit';
 import { Tooltip as ReactTooltip } from 'react-tooltip';
 import { IoMdArrowRoundBack } from 'react-icons/io';
-import Galleries from './Galleries';
+import { fetchGetPosts } from '../../store/postsSlice';
+import AllPosts from './AllPosts';
 
 // 페이지 전환효과
 const ScreenFrames = keyframes`
@@ -30,10 +31,10 @@ const Component = styled.section`
 `;
 
 const Wrapper = styled.div`
-  margin: 0 auto;
-  margin-top: 5rem;
-  max-width: 960px;
   position: relative;
+  margin: 0 auto;
+  /* margin-top: 5rem; */
+  max-width: 960px;
 `;
 
 const Title = styled.h1`
@@ -48,35 +49,6 @@ const Title = styled.h1`
   flex: 1 1 auto;
   transition: all 0.3s ease;
   text-align: center;
-`;
-
-const Form = styled.form`
-  animation: ${ScreenFrames} 0.75s;
-  display: flex;
-  flex-direction: column;
-
-  p {
-    font-size: 0.786rem;
-    margin-top: 0.2rem;
-    padding: 0.5rem;
-    text-align: center;
-  }
-`;
-
-const Input = styled.input`
-  padding: 0.6rem;
-  font-size: 14px;
-  border-radius: 5px;
-  border: 1px solid #bbb;
-  transition: all 0.3s ease;
-
-  &::placeholder {
-    color: #bbb;
-  }
-
-  &:focus {
-    border: 1px solid #777;
-  }
 `;
 
 const Message = styled.div`
@@ -105,13 +77,7 @@ const GoHomeButton = styled.button`
   }
 `;
 
-const EditFormButton = styled(Button)<{ buttonStyles: string }>`
-  cursor: ${({ buttonStyles }) => (buttonStyles ? 'pointer' : 'default')};
-  transition: all 0.3s ease;
-  color: #ffffff;
-  font-weight: bold;
-  background-color: ${({ buttonStyles }) => (buttonStyles ? 'gray' : '#eee')};
-`;
+const Collection = styled.div``;
 
 const BgImage = styled.img`
   position: absolute;
@@ -132,20 +98,21 @@ const NotPosts = styled.div`
 `;
 
 const AdminPage = () => {
+  let AllPostPage = 1;
+
   const { user, loading: userLoading }: any = useSelector(
     (state: RootState) => state.auth
   );
-  const { posts, loading } = useSelector((state: RootState) => state.posts);
+  const { posts } = useSelector((state: RootState) => state.posts);
+  const { newsPosts } = useSelector((state: RootState) => state.newsPosts);
 
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
   const navigator = useNavigate();
 
-  if (!userLoading && user && user.manager !== 'admin') {
-    alert('관리자가 아니면 접근할 수 없습니다.');
-
-    return <Navigate to='/' />;
-  }
+  useEffect(() => {
+    dispatch(fetchGetPosts(AllPostPage));
+  }, []);
 
   return (
     <Component>
@@ -164,41 +131,16 @@ const AdminPage = () => {
           />
         </GoHomeButton>
 
-        {/* {posts.length !== 0 && (
-          <Galleries
-            posts={posts}
-            loading={loading}
-            selectDeleteMode={selectDeleteMode}
-            selectedPosts={selectedPosts}
-            setSelectedPosts={setSelectedPosts}
-          />
-        )} */}
-        {/* {selectDeleteMode && (
-          <Alert>삭제하고 싶은 게시물을 선택해주세요.</Alert>
-        )} */}
+        {/* 뒤로가기 버튼과 게시물들을 분리시키기위해서 씀 */}
+        <Collection
+          style={{ display: 'flex', justifyContent: 'center' }}
+        ></Collection>
 
-        {/* 게시글 삭제하는 버튼 */}
-        {/* {posts.length !== 0 && (
-          <DeletePost
-            setSelectDeleteMode={setSelectDeleteMode}
-            selectDeleteMode={selectDeleteMode}
-            selectedPosts={selectedPosts}
-          />
-        )} */}
+        <Collection style={{ marginTop: '5rem' }}>
+          {posts.length !== 0 && <AllPosts posts={posts} />}
+          {newsPosts.length !== 0 && <AllPosts newsPosts={newsPosts} />}
+        </Collection>
       </Wrapper>
-      {posts.length === 0 && (
-        <NotPosts
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-          }}
-        >
-          아직 작성된 게시글들이 없네요..
-          <br />
-        </NotPosts>
-      )}
     </Component>
   );
 };
