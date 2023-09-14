@@ -2,13 +2,16 @@ import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { keyframes, styled } from 'styled-components';
 import { Button } from '../common/Styles';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../store';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { RootState, setIsPostModal } from '../../store';
+import { useNavigate } from 'react-router-dom';
 import { ThunkDispatch } from '@reduxjs/toolkit';
 import { Tooltip as ReactTooltip } from 'react-tooltip';
 import { IoMdArrowRoundBack } from 'react-icons/io';
 import { fetchGetPosts } from '../../store/postsSlice';
-import AllPosts from './AllPosts';
+import AdminItems from './AdminItems';
+import Loading from '../Loading';
+import { fetchAllNewsPosts } from '../../store/newsPostsSlice';
+import AdminModal from '../Modal/AdminModal';
 
 // 페이지 전환효과
 const ScreenFrames = keyframes`
@@ -28,12 +31,14 @@ const Component = styled.section`
   @media (max-width: 1024px) {
     padding-top: 0;
   }
+  @media (max-width: 375px) {
+    height: 160vh;
+  }
 `;
 
 const Wrapper = styled.div`
   position: relative;
   margin: 0 auto;
-  /* margin-top: 5rem; */
   max-width: 960px;
 `;
 
@@ -51,11 +56,18 @@ const Title = styled.h1`
   text-align: center;
 `;
 
-const Message = styled.div`
-  text-align: center;
-  margin-top: 0.5rem;
-  color: tomato;
-  font-size: 0.785rem;
+const SubTitle = styled.h3`
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+`;
+
+const List = styled.ul`
+  background-color: white;
+`;
+
+const ListWrap = styled.div`
+  max-height: 450px;
+  overflow-y: scroll;
 `;
 
 const GoHomeButton = styled.button`
@@ -77,47 +89,91 @@ const GoHomeButton = styled.button`
   }
 `;
 
-const Collection = styled.div``;
+const Collection = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 
-const BgImage = styled.img`
+  @media (max-width: 786px) {
+    padding: 10px;
+    grid-template-columns: 1fr;
+  }
+`;
+
+const CatImage = styled.img`
   position: absolute;
   width: 50px;
   height: 50px;
   top: 2rem;
 `;
 
-const NotPosts = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
-  @media (max-width: 640px) {
-    font-size: 0.875rem;
-  }
-`;
-
 const AdminPage = () => {
   let AllPostPage = 1;
 
-  const { user, loading: userLoading }: any = useSelector(
-    (state: RootState) => state.auth
+  const [imageURL, setImageURL] = useState<string[]>([]);
+  const [title, setTitle] = useState('');
+  const [contents, setContents] = useState('');
+  const [writer, setWriter] = useState('');
+  const [postId, setPostId] = useState('');
+  const [whatClicked, setWhatClicked] = useState(''); // 새소식 혹은 갤러리게시판중 어떤걸 클릭했는지
+
+  const { isModal } = useSelector((state: RootState) => state.postModal);
+  const { posts, loading: postLoading } = useSelector(
+    (state: RootState) => state.posts
   );
-  const { posts } = useSelector((state: RootState) => state.posts);
-  const { newsPosts } = useSelector((state: RootState) => state.newsPosts);
+  const { newsPosts, loading: newsLoading } = useSelector(
+    (state: RootState) => state.newsPosts
+  );
 
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
   const navigator = useNavigate();
 
+  const onModalActivate = (
+    item: {
+      user: string;
+      title: string;
+      contents: string;
+      image: string[];
+      _id: string;
+    },
+    newsClick?: boolean,
+    postsClick?: boolean
+  ) => {
+    newsClick && setWhatClicked('news');
+    postsClick && setWhatClicked('posts');
+    dispatch(setIsPostModal());
+    setTitle(item.title);
+    setContents(item.contents);
+    setImageURL(item.image);
+    setPostId(item._id);
+    setWriter(item.user);
+  };
+
   useEffect(() => {
     dispatch(fetchGetPosts(AllPostPage));
+    dispatch(fetchAllNewsPosts());
   }, []);
+
+  if (postLoading || newsLoading) {
+    return <Loading />;
+  }
 
   return (
     <Component>
+      {isModal && (
+        <AdminModal
+          whatClicked={whatClicked}
+          postId={postId}
+          writer={writer}
+          imageURL={imageURL}
+          postTitle={title}
+          postContents={contents}
+        />
+      )}
+
       <Title>
-        adminPage <BgImage src='/images/cat.jpg' alt='' />
+        adminPage <CatImage src='/images/cat.jpg' alt='' />
       </Title>
       <Wrapper>
         {/* 페이지 나가기 버튼 */}
@@ -137,8 +193,36 @@ const AdminPage = () => {
         ></Collection>
 
         <Collection style={{ marginTop: '5rem' }}>
-          {posts.length !== 0 && <AllPosts posts={posts} />}
-          {newsPosts.length !== 0 && <AllPosts newsPosts={newsPosts} />}
+          <List>
+            <SubTitle>갤러리</SubTitle>
+
+            <ListWrap className='scrollable-list'>
+              {posts.length !== 0 &&
+                posts.map((post, index) => (
+                  <AdminItems
+                    data={post}
+                    posts={true}
+                    key={index}
+                    onModalActivate={onModalActivate}
+                  />
+                ))}
+            </ListWrap>
+          </List>
+
+          <List>
+            <SubTitle>새소식</SubTitle>
+            <ListWrap className='scrollable-list'>
+              {newsPosts.length !== 0 &&
+                newsPosts.map((newsPost, index) => (
+                  <AdminItems
+                    data={newsPost}
+                    news={true}
+                    key={index}
+                    onModalActivate={onModalActivate}
+                  />
+                ))}
+            </ListWrap>
+          </List>
         </Collection>
       </Wrapper>
     </Component>

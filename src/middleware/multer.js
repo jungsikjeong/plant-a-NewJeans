@@ -28,6 +28,7 @@ const upload = multer({
       const randomBytes = crypto.randomBytes(16);
       const fileName =
         randomBytes.toString('hex') + path.extname(file.originalname);
+      console.log(fileName, file.originalname);
       cb(null, fileName);
     },
   }),

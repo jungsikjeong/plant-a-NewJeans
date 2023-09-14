@@ -49,7 +49,6 @@ router.get('/', async (req, res) => {
     // console.log(posts);
 
     const postCount = await NewsPost.countDocuments().exec();
-
     res.header('Last-Page', postCount);
 
     return res.json(posts);

@@ -272,7 +272,7 @@ const MyPage = () => {
                   })}
                 />
               )}
-              {/* {message && <Message>{message}</Message>} */}
+
               {errors && (
                 <Message>
                   {errors.username?.message as any}

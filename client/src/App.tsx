@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import GlobalStyles from './GlobalStyles';
 import { ThemeProvider } from 'styled-components';
 import { StyleSheetManager } from 'styled-components';
@@ -26,6 +26,7 @@ import PrivateRoute from './components/PrivateRoute';
 import EditPost from './components/EditPost';
 import NewsPost from './components/News/NewsPost';
 import AdminPage from './components/AdminPage';
+import NewsEdit from './components/News/NewsEdit';
 
 const theme = {
   fonts: {
@@ -64,6 +65,9 @@ const App = () => {
             <Route element={<PrivateRoute isAdmin={true} />}>
               <Route path='/pages/adminpage' element={<AdminPage />} />
             </Route>
+            <Route element={<PrivateRoute isAdmin={true} />}>
+              <Route path='/pages/newsPost/edit/:id' element={<NewsEdit />} />
+            </Route>
             <Route element={<PrivateRoute />}>
               <Route path='/pages/edit/:id' element={<EditPost />} />
             </Route>
@@ -72,6 +76,8 @@ const App = () => {
             </Route>
             <Route path='/pages/newsPost' element={<NewsPost />} />
             <Route path='/auth/kakao/callback' element={<KakaoCallBack />} />
+
+            <Route path='*' element={<Navigate replace to='/' />} />
           </Routes>
           <Footer />
         </CookiesProvider>
