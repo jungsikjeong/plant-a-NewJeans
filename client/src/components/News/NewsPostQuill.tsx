@@ -13,7 +13,6 @@ Quill.register('modules/imageResize', ImageResize);
 const REGION = process.env.REACT_APP_AWS_S3_BUCKET_REGION;
 const ACCESS_KEY = process.env.REACT_APP_AWS_S3_BUCKET_ACCESS_KEY_ID;
 const SECRET_ACCESS_KEY = process.env.REACT_APP_AWS_S3_BUCKET_SECRET_ACCESS_KEY;
-// const CLOUD_FRONT_URL = (배포한 CloudFront URI);
 
 const Container = styled.div`
   .quill {
@@ -55,7 +54,7 @@ interface ITextEditor {
 
 const NewsPostEditor = ({ title, contents, setContents }: ITextEditor) => {
   const [fileNames, setFileNames] = useState<any[]>([]);
-
+  const [addresses, setaddresses] = useState<any[]>([]);
   const { pathname } = useLocation();
   const navigator = useNavigate();
 
@@ -119,7 +118,7 @@ const NewsPostEditor = ({ title, contents, setContents }: ITextEditor) => {
       const range = editor.getSelection(true);
 
       // 서버에 올려질때까지 표시할 로딩 placeholder 삽입
-      editor.insertEmbed(range.index, 'image', `/images/imgLoading.gif`);
+      // editor.insertEmbed(range.index, 'image', `/images/imgLoading.gif`);
 
       if (file && range) {
         try {
@@ -127,6 +126,7 @@ const NewsPostEditor = ({ title, contents, setContents }: ITextEditor) => {
           const fileName = getRandomImageName(file.name);
 
           setFileNames((prev) => [...prev, fileName]);
+
           //생성한 s3 관련 설정들
           AWS.config.update({
             region: REGION,
@@ -151,10 +151,12 @@ const NewsPostEditor = ({ title, contents, setContents }: ITextEditor) => {
           const range = editor.getSelection();
 
           // 정상적으로 업로드 됐다면 로딩 placeholder 삭제
-          editor.deleteText(range.index, 1);
+          // editor.deleteText(range.index, 1);
 
           // 가져온 위치에 이미지를 삽입한다
           editor.insertEmbed(range.index, 'image', IMG_URL);
+
+          addresses.push(IMG_URL);
 
           // 사용자 편의를 위해 커서 이미지 오른쪽으로 이동
           editor.setSelection(range.index + 1);
@@ -172,6 +174,23 @@ const NewsPostEditor = ({ title, contents, setContents }: ITextEditor) => {
     });
     navigator('/');
   };
+
+  useEffect(() => {
+    // react-quill에서 이미지를 지우면
+    addresses.map(async (address) => {
+      if (!contents.includes(address)) {
+        // AWS S3 주소에서 파일명 추출
+        const fileName = address.split('/').pop();
+
+        // fileNames 배열에 포함되어 있는지 확인
+        if (fileNames.includes(fileName)) {
+          await deleteImageFromS3(fileName);
+        }
+      }
+
+      return true;
+    });
+  }, [fileNames, addresses, contents]);
 
   const deleteImageFromS3 = async (fileName: string) => {
     const s3 = new AWS.S3({

@@ -91,7 +91,7 @@ const Title = styled.input`
   border-radius: 5px;
 `;
 
-const NewsEdit = () => {
+const EditNews = () => {
   const [title, setTitle] = useState(''); // news 제목
   const [contents, setContents] = useState(''); // news 내용
   const titleLengthRef = useRef<HTMLInputElement>(null);
@@ -177,4 +177,4 @@ const NewsEdit = () => {
   );
 };
 
-export default NewsEdit;
+export default EditNews;

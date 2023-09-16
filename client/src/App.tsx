@@ -26,7 +26,7 @@ import PrivateRoute from './components/PrivateRoute';
 import EditPost from './components/EditPost';
 import NewsPost from './components/News/NewsPost';
 import AdminPage from './components/AdminPage';
-import NewsEdit from './components/News/NewsEdit';
+import EditNews from './components/News/EditNews';
 
 const theme = {
   fonts: {
@@ -66,7 +66,7 @@ const App = () => {
               <Route path='/pages/adminpage' element={<AdminPage />} />
             </Route>
             <Route element={<PrivateRoute isAdmin={true} />}>
-              <Route path='/pages/newsPost/edit/:id' element={<NewsEdit />} />
+              <Route path='/pages/newsPost/edit/:id' element={<EditNews />} />
             </Route>
             <Route element={<PrivateRoute />}>
               <Route path='/pages/edit/:id' element={<EditPost />} />
