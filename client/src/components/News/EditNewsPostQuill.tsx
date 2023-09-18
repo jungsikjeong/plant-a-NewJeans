@@ -50,16 +50,15 @@ interface ITextEditor {
   title: string;
   contents: string;
   setContents: React.Dispatch<React.SetStateAction<string>>;
-  postEditMode?: boolean; // 게시글 수정 모드
   fileImage?: string[];
   id?: string;
 }
+let uploadSuccess: boolean = false;
 
 const EditNewsPostQuill = ({
   title,
   contents,
   setContents,
-  postEditMode,
   fileImage,
   id,
 }: ITextEditor) => {
@@ -69,6 +68,7 @@ const EditNewsPostQuill = ({
   const [addresses, setAddresses] = useState<any[]>([]);
   // 기존이미지를 삭제했을때 서버에서 분류해서 저장하기위한 state
   const [deletedImages, setDeletedImages] = useState<any[]>([]);
+
   const { pathname } = useLocation();
   const navigator = useNavigate();
 
@@ -122,6 +122,7 @@ const EditNewsPostQuill = ({
         });
 
         alert('News 편집 완료');
+        uploadSuccess = true;
         setFileNames([]);
         navigator('/pages/news');
       }
@@ -243,10 +244,7 @@ const EditNewsPostQuill = ({
   };
 
   const modules = useMemo(() => {
-    if (
-      pathname === '/pages/newsPost' ||
-      pathname.startsWith('/pages/newsPost/edit')
-    ) {
+    if (pathname.startsWith('/pages/newsPost/edit')) {
       return {
         toolbar: {
           container: [
@@ -288,24 +286,15 @@ const EditNewsPostQuill = ({
     }
   }, [pathname]);
 
-  // 페이지 뒤로가기 클릭할 시
-  // 이미지 삭제
+  // 게시글 저장안하고 페이지 뒤로가기 클릭할 시
+  // 새로 올린 이미지 삭제
   useEffect(() => {
-    const onPopstate = (e: any) => {
-      console.log(e);
-      console.log(fileNames);
-      // if (currentFileNames && currentFileNames.length > 0) {
-      //   console.log('currentFileNames', currentFileNames);
-      //   currentFileNames.forEach(async (fileName) => {
-      //     // fileName && (await deleteImageFromS3(fileName));
-      //   });
-      // }
-    };
-
-    window.addEventListener('popstate', (e) => onPopstate(e));
-
     return () => {
-      window.removeEventListener('popstate', (e) => onPopstate(e));
+      if (fileNames && fileNames.length > 0 && !uploadSuccess) {
+        fileNames.forEach(async (fileName) => {
+          fileName && (await deleteImageFromS3(fileName));
+        });
+      }
     };
   }, [fileNames]);
 

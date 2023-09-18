@@ -190,7 +190,6 @@ const EditNews = () => {
             title={title}
             contents={contents}
             setContents={setContents}
-            postEditMode={true}
             fileImage={newsPost?.image}
             id={id}
           />

@@ -53,6 +53,8 @@ interface ITextEditor {
   postEditMode?: boolean; // 게시글 수정 모드
 }
 
+let uploadSuccess: boolean = false;
+
 const NewsPostEditor = ({
   title,
   contents,
@@ -261,18 +263,15 @@ const NewsPostEditor = ({
     }
   }, [pathname]);
 
-  // 페이지 뒤로가기 클릭할 시
-  // 이미지 삭제
+  // 게시글 저장안하고 페이지 뒤로가기 클릭할 시
+  // 새로 올린 이미지 삭제
   useEffect(() => {
-    const onPopstate = () => {
-      fileNames.forEach(async (fileName) => {
-        await deleteImageFromS3(fileName);
-      });
-    };
-
-    window.addEventListener('popstate', () => onPopstate());
     return () => {
-      window.addEventListener('popstate', () => onPopstate());
+      if (fileNames && fileNames.length > 0 && !uploadSuccess) {
+        fileNames.forEach(async (fileName) => {
+          fileName && (await deleteImageFromS3(fileName));
+        });
+      }
     };
   }, [fileNames]);
 
