@@ -6,6 +6,7 @@ const isLogin = require('../../middleware/isLogin');
 const upload = require('../../middleware/multer');
 
 const NewsPost = require('../../models/NewsPost');
+const Post = require('../../models/Post');
 const User = require('../../models/User');
 
 function dataFun() {
@@ -38,16 +39,6 @@ router.get('/', async (req, res) => {
       })
       .lean();
 
-    // const posts = await NewsPost.find()
-    //   .sort({
-    //     _id: -1,
-    //   })
-    //   .skip((page - 1) * itemsPerPage)
-    //   .limit(itemsPerPage)
-    //   .lean();
-
-    // console.log(posts);
-
     const postCount = await NewsPost.countDocuments().exec();
     res.header('Last-Page', postCount);
 
@@ -58,44 +49,67 @@ router.get('/', async (req, res) => {
   }
 });
 
-/** 게시글 검색 */
-router.get('/search', async (req, res) => {
+/** 게시글 삭제하기 */
+router.delete('/:id', isLogin, async (req, res) => {
+  const { news, posts } = req.query;
+
   try {
-    const { option, inputValue } = req.query;
+    // posts을 삭제할 때
+    if (posts !== 'undefined') {
+      const post = await Post.findById(req.params.id);
 
-    let searchCondition = {};
+      if (!post) {
+        return res.status(404).json({ message: '게시글을 찾을 수 없습니다.' });
+      }
 
-    switch (option) {
-      case 'title':
-        searchCondition = {
-          title: { $regex: inputValue, $options: 'i' },
+      // AWS S3 인스턴스 생성
+      const s3 = new AWS.S3();
+      // 모든 게시물의 이미지를 삭제
+      for (const imageFileName of post.image) {
+        const params = {
+          Bucket: 'plant-newjeans/gallery', // S3 버킷 이름
+          Key: imageFileName, // 파일명
         };
-        break;
-      case 'contents':
-        console.log(option);
-        searchCondition = {
-          contents: { $regex: inputValue, $options: 'i' },
-        };
-        break;
-      case 'titleAndContent':
-        searchCondition = {
-          $or: [
-            { title: { $regex: inputValue, $options: 'i' } },
-            { contents: { $regex: inputValue, $options: 'i' } },
-          ],
-        };
-        break;
-      default:
-        break;
+        // 이미지 삭제
+        await s3.deleteObject(params).promise();
+      }
+
+      await post.deleteOne(); // 게시글 삭제
+
+      return res
+        .status(200)
+        .json({ message: '게시글이 성공적으로 삭제되었습니다.' });
+
+      return;
     }
-    const result = await NewsPost.find(searchCondition)
-      .sort({ _id: -1 })
-      .lean();
 
-    return res.json(result);
+    if (news !== 'undefined') {
+      const newsPost = await NewsPost.findById(req.params.id);
+
+      if (!newsPost) {
+        return res.status(404).json({ message: '게시글을 찾을 수 없습니다.' });
+      }
+
+      // AWS S3 인스턴스 생성
+      const s3 = new AWS.S3();
+      // 모든 게시물의 이미지를 삭제
+      for (const imageFileName of newsPost.image) {
+        const params = {
+          Bucket: 'plant-newjeans/news', // S3 버킷 이름
+          Key: imageFileName, // 파일명
+        };
+        // 이미지 삭제
+        await s3.deleteObject(params).promise();
+      }
+
+      await newsPost.deleteOne(); // 게시글 삭제
+
+      return res
+        .status(200)
+        .json({ message: '게시글이 성공적으로 삭제되었습니다.' });
+    }
   } catch (error) {
-    console.error(error.message);
-    res.status(500).send('Server Error');
+    console.log(error);
   }
 });
 
@@ -115,144 +129,45 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// 이미지 수정 시에 필요한 정보와 동작을 구현한 코드
-router.post('/:id', isLogin, upload.array('images', 3), async (req, res) => {
-  try {
-    const obj = JSON.parse(JSON.stringify(req.body));
-    const { title, contents, deletedImages } = JSON.parse(obj.data);
+/** 특정 게시글 수정하기 */
+router.put('/:id', isLogin, async (req, res) => {
+  const { title, contents, fileNames, deletedImages } = req.body;
 
+  const currentDate = dataFun();
+
+  try {
     const post = await NewsPost.findById(req.params.id);
-    if (!post) {
-      return res.status(404).json({ message: '게시글을 찾을 수 없습니다.' });
-    }
+    if (post) {
+      // 기존 이미지
+      const existingImages = post.image;
+      // 새로운 이미지
+      const newImages = [...fileNames];
 
-    // 기존 이미지와 새로운 이미지
-    const existingImages = post.image;
-    const newImages = req.files.map((file) => file.key);
+      // 기존이미지 삭제한 경우
+      // 기존이미지중에서 삭제한 이미지를 제외한 값을 리턴함
+      const removedImages = deletedImages || [];
+      const remainingImages = existingImages.filter(
+        (image) => !deletedImages.includes(image)
+      );
 
-    // 이미지 삭제한 경우
-    const removedImages = deletedImages || [];
-    const remainingImages = existingImages.filter(
-      (image) => !removedImages.includes(image)
-    );
+      // 새로운 이미지와 기존 이미지 결합
+      const updatedImages = [...remainingImages, ...newImages];
 
-    // 새로운 이미지와 기존 이미지 결합
-    const updatedImages = [...remainingImages, ...newImages];
-
-    // AWS S3 인스턴스 생성
-    const s3 = new AWS.S3();
-    // AWS S3에서 이미지 삭제
-    removedImages.forEach(async (imageFileName) => {
-      const params = {
-        Bucket: 'plant-newjeans/gallery', // S3 버킷 이름
-        Key: imageFileName, // 파일명
-      };
-      await s3.deleteObject(params).promise();
-    });
-
-    // 게시글 업데이트
-    const updatedPost = await NewsPost.findByIdAndUpdate(
-      req.params.id,
-      {
-        $set: {
-          title: title,
-          contents: contents,
-          image: updatedImages,
+      const newPost = await NewsPost.findByIdAndUpdate(
+        post,
+        {
+          $set: {
+            title: title,
+            contents: contents,
+            image: updatedImages,
+            user: req.user,
+            date: currentDate,
+          },
         },
-      },
-      { new: true }
-    ).exec();
-
-    return res.json(updatedPost);
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).send('Server Error');
-  }
-});
-
-/** 선택한 게시글 삭제하기 */
-router.delete('/select/delete', isLogin, async (req, res) => {
-  try {
-    const selectedPostIds = req.body; // 선택한 게시글의 ID 목록
-
-    const user = await User.findById(req.user);
-
-    if (!user) {
-      return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+        { new: true }
+      ).exec();
+      return res.json(newPost);
     }
-
-    // 선택한 게시글 ID 목록을 사용하여 게시글 삭제
-    for (const postId of selectedPostIds) {
-      const post = await NewsPost.findById(postId);
-
-      if (!post) {
-        return res.status(404).json({ message: '게시글을 찾을 수 없습니다.' });
-      }
-
-      // 게시글의 작성자와 현재 사용자를 비교하여 권한 확인
-      if (post.user.toString() === req.user.toString()) {
-        // AWS S3 인스턴스 생성
-        const s3 = new AWS.S3();
-
-        // 모든 게시물의 이미지를 삭제
-        for (const imageFileName of post.image) {
-          const params = {
-            Bucket: 'plant-newjeans/gallery', // S3 버킷 이름
-            Key: imageFileName, // 파일명
-          };
-
-          // 이미지 삭제
-          await s3.deleteObject(params).promise();
-        }
-
-        await post.deleteOne(); // 게시글 삭제
-      } else {
-        // 권한이 없는 경우에 대한 처리
-        return res.status(403).json({ message: '권한이 없습니다.' });
-      }
-    }
-
-    // 모든 게시글이 삭제되었거나 권한이 있어 삭제한 경우 성공 응답 반환
-    return res
-      .status(200)
-      .json({ message: '게시글이 성공적으로 삭제되었습니다.' });
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).send('Server Error');
-  }
-});
-
-/** 자기가 작성한 모든 게시글 삭제하기 */
-router.delete('/all/delete', isLogin, async (req, res) => {
-  try {
-    const user = await User.findById(req.user);
-
-    if (!user) {
-      return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
-    }
-
-    const posts = await NewsPost.find({ user: user._id });
-
-    // AWS S3 인스턴스 생성
-    const s3 = new AWS.S3();
-
-    // 모든 게시물의 이미지를 삭제
-    for (const post of posts) {
-      for (const imageFileName of post.image) {
-        const params = {
-          Bucket: 'plant-newjeans/gallery', // S3 버킷 이름
-          Key: imageFileName, // 파일명
-        };
-
-        // 이미지 삭제
-        await s3.deleteObject(params).promise();
-      }
-    }
-
-    // 모든 게시글 삭제
-    await NewsPost.deleteMany({ user: user._id });
-
-    res.status(200).json({ status: 'ok' });
   } catch (error) {
     console.error(error.message);
     res.status(500).send('Server Error');

@@ -103,6 +103,15 @@ const GlobalStyles = createGlobalStyle`
     background-color: #555; /* 스크롤 바에 마우스를 올렸을 때의 색상 */
   }
 
+  /* 데이터 없음 */
+  .no-data{
+    border: 1px solid #f1f1f1;
+    border-radius: 5px;
+    padding: 10px 24px;
+    margin:1rem;
+    color:gray;
+  }
+
 
 
     @keyframes fadeInDropdown{

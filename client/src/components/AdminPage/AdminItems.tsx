@@ -35,7 +35,7 @@ const Contents = styled.div`
   }
 `;
 
-const AdminItems = ({ data, posts, news, onModalActivate }: any) => {
+const AdminItems = ({ data, posts, news, onModalActivate, onRemove }: any) => {
   return (
     <Component>
       <Wrapper>
@@ -69,9 +69,16 @@ const AdminItems = ({ data, posts, news, onModalActivate }: any) => {
                   }}
                 >
                   {news && (
-                    <Link to={`/pages/newsPost/edit/${data._id}`}>수정</Link>
-                  )}{' '}
-                  <span>삭제</span>
+                    <Link
+                      to={`/pages/newsPost/edit/${data._id}`}
+                      style={{ marginRight: '10px' }}
+                    >
+                      수정
+                    </Link>
+                  )}
+                  <span onClick={() => onRemove(data._id, posts, news)}>
+                    삭제
+                  </span>
                 </span>
               </p>
 

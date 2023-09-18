@@ -1,13 +1,15 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { keyframes, styled } from 'styled-components';
 import { BsExclamation } from 'react-icons/bs';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Tooltip as ReactTooltip } from 'react-tooltip';
 import { RootState } from '../../store';
-import NewsPostEditor from './NewsPostQuill';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import Loading from '../Loading';
+import { ThunkDispatch } from '@reduxjs/toolkit';
+import { INewsPosts, fetchGetNewsPost } from '../../store/newsPostsSlice';
+import EditNewsPostQuill from './EditNewsPostQuill';
 
 // 페이지 전환효과
 const ScreenFrames = keyframes`
@@ -96,9 +98,27 @@ const EditNews = () => {
   const [contents, setContents] = useState(''); // news 내용
   const titleLengthRef = useRef<HTMLInputElement>(null);
 
+  const { id } = useParams();
+
   const { user, loading: userLoading }: any = useSelector(
     (state: RootState) => state.auth
   );
+  const { newsPost, loading: newsPostLoading } = useSelector(
+    (state: RootState) => state.newsPosts
+  );
+
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+
+  useEffect(() => {
+    dispatch(fetchGetNewsPost(id as string));
+  }, []);
+
+  useEffect(() => {
+    if (newsPost) {
+      setTitle(newsPost.title);
+      setContents(newsPost.contents);
+    }
+  }, [newsPost]);
 
   // 제목 길이에 css
   useEffect(() => {
@@ -111,7 +131,7 @@ const EditNews = () => {
     }
   }, [title, contents]);
 
-  if (userLoading) {
+  if (userLoading || newsPostLoading) {
     return <Loading />;
   }
 
@@ -166,10 +186,13 @@ const EditNews = () => {
             <span className='textLength'></span>
           </Box>
 
-          <NewsPostEditor
+          <EditNewsPostQuill
             title={title}
             contents={contents}
             setContents={setContents}
+            postEditMode={true}
+            fileImage={newsPost?.image}
+            id={id}
           />
         </Form>
       </Wrapper>

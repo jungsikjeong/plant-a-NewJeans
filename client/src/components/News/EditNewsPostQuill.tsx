@@ -51,22 +51,29 @@ interface ITextEditor {
   contents: string;
   setContents: React.Dispatch<React.SetStateAction<string>>;
   postEditMode?: boolean; // 게시글 수정 모드
+  fileImage?: string[];
+  id?: string;
 }
 
-const NewsPostEditor = ({
+const EditNewsPostQuill = ({
   title,
   contents,
   setContents,
   postEditMode,
+  fileImage,
+  id,
 }: ITextEditor) => {
   const [fileNames, setFileNames] = useState<any[]>([]);
   // 이미지를 quill에서 지웠을때 이미지 삭제처리를위한 state
   // aws s3 파일 url이 들어감
   const [addresses, setAddresses] = useState<any[]>([]);
+  // 기존이미지를 삭제했을때 서버에서 분류해서 저장하기위한 state
+  const [deletedImages, setDeletedImages] = useState<any[]>([]);
   const { pathname } = useLocation();
   const navigator = useNavigate();
 
   const quillRef = useRef(null) as any;
+
   const titleLengthWarning = useMemo(() => {
     if (title.trim().length < 2) {
       return '제목은 최소 2글자이상 작성해주세요';
@@ -98,12 +105,24 @@ const NewsPostEditor = ({
       title,
       contents,
       fileNames,
+      deletedImages,
     };
 
     try {
-      const res = await api.post('/newsPosts', body);
+      const res = await api.put(`/newsPosts/${id}`, body);
       if (res.status === 200) {
-        alert('새로운 소식 작성이 완료되었습니다.');
+        // 기존 이미지를 삭제했을때
+        addresses.map(async (address) => {
+          if (!contents.includes(address)) {
+            // AWS S3 주소에서 파일명 추출
+            const fileName = address.split('/').pop();
+
+            await deleteImageFromS3(fileName);
+          }
+        });
+
+        alert('News 편집 완료');
+        setFileNames([]);
         navigator('/pages/news');
       }
     } catch (error) {
@@ -134,7 +153,7 @@ const NewsPostEditor = ({
 
           setFileNames((prev) => [...prev, fileName]);
 
-          //생성한 s3 관련 설정들
+          // s3 관련 설정들
           AWS.config.update({
             region: REGION,
             accessKeyId: ACCESS_KEY,
@@ -183,21 +202,26 @@ const NewsPostEditor = ({
   };
 
   useEffect(() => {
+    // EditNews.tsx에서 fileImage에 파일의 이름을 배열로 담아서 보내줌
+    // EX) [파일이름_1.jpg,파일이름_2.jpg,...]
+    if (fileImage) {
+      fileImage.map((imgName) => setAddresses((prev) => [...prev, imgName]));
+    }
+  }, []);
+
+  useEffect(() => {
     // react-quill에서 이미지를 지우면
     addresses.map(async (address) => {
       if (!contents.includes(address)) {
-        // AWS S3 주소에서 파일명 추출
+        // AWS S3주소에서 파일명만 추출
         const fileName = address.split('/').pop();
 
-        // fileNames 배열에 포함되어 있는지 확인
-        if (fileNames.includes(fileName)) {
-          await deleteImageFromS3(fileName);
-        }
+        deletedImages.push(fileName);
       }
 
       return true;
     });
-  }, [fileNames, addresses, contents]);
+  }, [addresses, contents]);
 
   const deleteImageFromS3 = async (fileName: string) => {
     const s3 = new AWS.S3({
@@ -219,7 +243,10 @@ const NewsPostEditor = ({
   };
 
   const modules = useMemo(() => {
-    if (pathname === '/pages/newsPost') {
+    if (
+      pathname === '/pages/newsPost' ||
+      pathname.startsWith('/pages/newsPost/edit')
+    ) {
       return {
         toolbar: {
           container: [
@@ -264,15 +291,21 @@ const NewsPostEditor = ({
   // 페이지 뒤로가기 클릭할 시
   // 이미지 삭제
   useEffect(() => {
-    const onPopstate = () => {
-      fileNames.forEach(async (fileName) => {
-        await deleteImageFromS3(fileName);
-      });
+    const onPopstate = (e: any) => {
+      console.log(e);
+      console.log(fileNames);
+      // if (currentFileNames && currentFileNames.length > 0) {
+      //   console.log('currentFileNames', currentFileNames);
+      //   currentFileNames.forEach(async (fileName) => {
+      //     // fileName && (await deleteImageFromS3(fileName));
+      //   });
+      // }
     };
 
-    window.addEventListener('popstate', () => onPopstate());
+    window.addEventListener('popstate', (e) => onPopstate(e));
+
     return () => {
-      window.addEventListener('popstate', () => onPopstate());
+      window.removeEventListener('popstate', (e) => onPopstate(e));
     };
   }, [fileNames]);
 
@@ -313,4 +346,4 @@ const NewsPostEditor = ({
     </Container>
   );
 };
-export default NewsPostEditor;
+export default EditNewsPostQuill;

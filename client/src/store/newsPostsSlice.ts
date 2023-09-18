@@ -1,7 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { api } from '../api';
 
-interface INewsPosts {
+export interface INewsPosts {
   contents: string;
   date: string;
   image: string[];
@@ -23,6 +24,20 @@ export const fetchAllNewsPosts = createAsyncThunk(
   }
 );
 
+// 특정 게시물 가져오기
+export const fetchGetNewsPost = createAsyncThunk(
+  'newsPosts/fetchGetNewsPost',
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const { data } = await api.get(`/newsPosts/${id}`);
+
+      return data;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data.errors);
+    }
+  }
+);
+
 // 게시물 검색하기
 export const fetchSearchNewsPosts = createAsyncThunk(
   'newsPosts/fetchGetNewsPosts',
@@ -32,7 +47,7 @@ export const fetchSearchNewsPosts = createAsyncThunk(
       const { data } = await axios.get(
         `/api/newsPosts/search?option=${option}&inputValue=${inputValue}`
       );
-      console.log(data);
+
       return data;
     } catch (error: any) {
       return rejectWithValue(error.response.data.errors);
@@ -45,6 +60,7 @@ export const newsPostsSlice = createSlice({
   initialState: {
     loading: true,
     newsPosts: [] as INewsPosts[],
+    newsPost: null as INewsPosts | null,
     lastPage: 0,
     error: null,
   },
@@ -66,6 +82,20 @@ export const newsPostsSlice = createSlice({
       .addCase(fetchAllNewsPosts.rejected, (state, action) => {
         state.loading = false;
         state.newsPosts = [];
+      })
+
+      .addCase(fetchGetNewsPost.pending, (state, action) => {
+        state.loading = true;
+        state.newsPost = null;
+      })
+      .addCase(fetchGetNewsPost.fulfilled, (state, action) => {
+        state.loading = false;
+        state.newsPost = action.payload;
+        state.error = null;
+      })
+      .addCase(fetchGetNewsPost.rejected, (state, action) => {
+        state.loading = false;
+        state.newsPost = null;
       })
 
       .addCase(fetchSearchNewsPosts.pending, (state, action) => {

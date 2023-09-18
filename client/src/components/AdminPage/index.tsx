@@ -12,6 +12,7 @@ import AdminItems from './AdminItems';
 import Loading from '../Loading';
 import { fetchAllNewsPosts } from '../../store/newsPostsSlice';
 import AdminModal from '../Modal/AdminModal';
+import { api } from '../../api';
 
 // 페이지 전환효과
 const ScreenFrames = keyframes`
@@ -129,6 +130,21 @@ const AdminPage = () => {
 
   const navigator = useNavigate();
 
+  const onRemove = async (id: string, posts?: boolean, news?: boolean) => {
+    try {
+      const res = await api.delete(
+        `/newsPosts/${id}?posts=${posts}&news=${news}`
+      );
+
+      if (res.status === 200) {
+        dispatch(fetchGetPosts(AllPostPage));
+        dispatch(fetchAllNewsPosts());
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const onModalActivate = (
     item: {
       user: string;
@@ -197,30 +213,38 @@ const AdminPage = () => {
             <SubTitle>갤러리</SubTitle>
 
             <ListWrap className='scrollable-list'>
-              {posts.length !== 0 &&
+              {!postLoading && posts.length !== 0 ? (
                 posts.map((post, index) => (
                   <AdminItems
                     data={post}
                     posts={true}
                     key={index}
                     onModalActivate={onModalActivate}
+                    onRemove={onRemove}
                   />
-                ))}
+                ))
+              ) : (
+                <div className='no-data'>데이터가 없습니다.</div>
+              )}
             </ListWrap>
           </List>
 
           <List>
             <SubTitle>새소식</SubTitle>
             <ListWrap className='scrollable-list'>
-              {newsPosts.length !== 0 &&
+              {!newsLoading && newsPosts.length !== 0 ? (
                 newsPosts.map((newsPost, index) => (
                   <AdminItems
                     data={newsPost}
                     news={true}
                     key={index}
                     onModalActivate={onModalActivate}
+                    onRemove={onRemove}
                   />
-                ))}
+                ))
+              ) : (
+                <div className='no-data'>데이터가 없습니다.</div>
+              )}
             </ListWrap>
           </List>
         </Collection>
