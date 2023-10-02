@@ -90,6 +90,10 @@ const Figure = styled.figure`
   flex: 1;
   max-width: 680px;
   margin: 0 auto;
+  img {
+    width: 100%;
+    height: 100%;
+  }
 
   figcaption {
     padding: 7px 15px 8px;

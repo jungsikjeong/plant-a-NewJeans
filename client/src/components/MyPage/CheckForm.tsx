@@ -67,6 +67,7 @@ const CheckForm = ({ setFormVisible, setUserCheck, email }: ICheckForm) => {
   const {
     register,
     handleSubmit,
+
     formState: { errors, isValid },
   } = useForm();
 
